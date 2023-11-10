@@ -6,6 +6,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+<<<<<<< HEAD
 
   // This widget is the root of your application.
   @override
@@ -122,4 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+=======
+>>>>>>> a46fe7befa69c6559d739151eb8ed1a2aec99cd7
 }
