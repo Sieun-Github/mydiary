@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
-<<<<<<<<< Temporary merge branch 1
-
-class TableCalendarScreen extends StatelessWidget {
-  const TableCalendarScreen({Key? key}) : super(key: key);
-=========
 import 'package:intl/intl.dart';
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+class Home extends StatelessWidget {
+  // const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +21,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  //const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -41,20 +36,10 @@ class _MyHomePageState extends State<MyHomePage> {
     DateTime.now().day,
   );
   DateTime focusedDay = DateTime.now();
->>>>>>>>> Temporary merge branch 2
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<<<< Temporary merge branch 1
-      appBar: AppBar(),
-      body: TableCalendar(
-        firstDay: DateTime.utc(2021, 10, 16),
-        lastDay: DateTime.utc(2030, 3, 14),
-        focusedDay: DateTime.now(),
-      ),
-    );
-=========
         backgroundColor: Colors.white,
         body: SafeArea(
             child: Center(
@@ -71,6 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     this.selectedDay = selectedDay;
                     this.focusedDay = focusedDay;
                   });
+                  // 추가
+                  GoRouter.of(context).go('/diary');
                 },
                 selectedDayPredicate: (DateTime day) {
                   return isSameDay(selectedDay, day);
@@ -79,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   headerPadding: const EdgeInsets.symmetric(vertical: 20),
                   titleCentered: true,
                   titleTextFormatter: (date, locale) =>
-                      DateFormat.yMMMM(locale).format(date),
+                      DateFormat.yMMM(locale).format(date),
                   titleTextStyle: const TextStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
@@ -110,6 +97,5 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
             ]))));
->>>>>>>>> Temporary merge branch 2
   }
 }
