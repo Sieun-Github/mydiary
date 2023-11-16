@@ -6,10 +6,6 @@ class Diary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Diary 작성'),
-        backgroundColor: Color(0xFFCCFFFF),
-      ),
       body: Center(child: Text('오늘 하루를 마무리 해보세요.')),
     );
   }
