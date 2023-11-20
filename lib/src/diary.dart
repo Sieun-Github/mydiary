@@ -66,7 +66,7 @@ class _DiaryState extends State<Diary> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the alert dialog
               },
-              child: const Text('계속 작성하기'),
+              child: const Text('계속적기'),
             ),
             TextButton(
               onPressed: () {
