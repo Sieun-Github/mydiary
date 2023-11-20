@@ -66,13 +66,13 @@ class _DiaryState extends State<Diary> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the alert dialog
               },
-              child: const Text('취소'),
+              child: const Text('나가기'),
             ),
             TextButton(
               onPressed: () {
                 GoRouter.of(context).go('/'); // Navigate back to the home page
               },
-              child: const Text('확인'),
+              child: const Text('계속적기'),
             ),
           ],
         );
