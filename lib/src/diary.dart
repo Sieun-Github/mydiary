@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class Diary extends StatefulWidget {
   const Diary({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class _DiaryState extends State<Diary> {
   final TextEditingController _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('yyyy. MM. dd.').format(DateTime.now());
     return Scaffold(
       body: Center(
         child: Column(
@@ -21,16 +23,18 @@ class _DiaryState extends State<Diary> {
               child: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  GoRouter.of(context).go('/');
+                  _showAlertDialog();
+                  //GoRouter.of(context).go('/');
                 },
               ),
             ),
-            Text('${DateTime.now()}'),
+            Text(formattedDate),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
                 controller: _textEditingController,
-                maxLength: 140, // 여러 줄
+                maxLength: 150, // 여러 줄
+                maxLines: 8,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '일기 작성',
@@ -47,6 +51,32 @@ class _DiaryState extends State<Diary> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showAlertDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('경고'),
+          content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the alert dialog
+              },
+              child: const Text('나가기'),
+            ),
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).go('/'); // Navigate back to the home page
+              },
+              child: const Text('계속적기'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
