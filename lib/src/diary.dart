@@ -20,9 +20,10 @@ class _DiaryState extends State<Diary> {
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
                 controller: _textEditingController,
-                maxLength: 140, // 여러 줄
+                maxLength: 140, 
+                maxLines: 5, // 다섯 줄
                 decoration: const InputDecoration(
-                  border: InputBorder.none, // 테두리 없음
+                  border: InputBorder.none, // 텍스트 입력 공간 밑줄 없음
                   labelText: '', // 라벨 없음
                 ),
               ),
