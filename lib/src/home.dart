@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
+DateTime day = DateTime.now();
+
 class Home extends StatelessWidget {
-  // const Home({super.key});
   const Home({Key? key}) : super(key: key);
 
   @override
@@ -55,8 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     this.selectedDay = selectedDay;
                     this.focusedDay = focusedDay;
+                    day = selectedDay;
                   });
-                  // 추가
                   GoRouter.of(context).go('/diary');
                 },
                 selectedDayPredicate: (DateTime day) {

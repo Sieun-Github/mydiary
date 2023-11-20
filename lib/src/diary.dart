@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'home.dart';
 
 class Diary extends StatefulWidget {
   const Diary({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class _DiaryState extends State<Diary> {
   final TextEditingController _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('yyyy. MM. dd.').format(DateTime.now());
+    String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
       body: Center(
         child: Column(
@@ -24,7 +25,6 @@ class _DiaryState extends State<Diary> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   _showAlertDialog();
-                  //GoRouter.of(context).go('/');
                 },
               ),
             ),
@@ -66,13 +66,13 @@ class _DiaryState extends State<Diary> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the alert dialog
               },
-              child: const Text('나가기'),
+              child: const Text('계속적기'),
             ),
             TextButton(
               onPressed: () {
                 GoRouter.of(context).go('/'); // Navigate back to the home page
               },
-              child: const Text('계속적기'),
+              child: const Text('나가기'),
             ),
           ],
         );
