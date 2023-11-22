@@ -22,7 +22,20 @@ List<XFile?> images = [];
 class _DiaryState extends State<Diary> {
   late SharedPreferences prefs;
   late TextEditingController _textEditingController = TextEditingController();
+  late bool _visibility;
   String _savedText = '';
+
+  void _show(){
+    setState(() {
+    _visibility = true;
+    
+    });
+  }
+  void _hide() {
+    setState(() {
+      _visibility = false;
+    });
+  }
 
   @override
   void initState() {
@@ -74,6 +87,9 @@ class _DiaryState extends State<Diary> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Visibility(
+                  visible:_visibility,
+                child:
                 Container(
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.all(5),
@@ -106,7 +122,9 @@ class _DiaryState extends State<Diary> {
                       color: Colors.white,
                     ),
                   ),
-                ),
+                ),),
+                Visibility(visible: _visibility,
+                  child:
                 Container(
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.all(5),
@@ -139,7 +157,7 @@ class _DiaryState extends State<Diary> {
                       color: Colors.white,
                     ),
                   ),
-                ),
+                ),)
               ],
             ),
             Container(
@@ -195,24 +213,41 @@ class _DiaryState extends State<Diary> {
             ),
             Text(formattedDate),
             Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextFormField(
+              padding: const EdgeInsets.all(16.0),
+              child: Stack (
+                children: [
+                  Visibility(
+                visible: _visibility,
+                child:
+               // 일기 작성 영역
+               TextFormField( 
                 controller: _textEditingController,
                 maxLength: 150,
                 maxLines: 8,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: '일기 작성'
+                  labelText: '일기 작성',
                 ),
-              ),
+              ),),
+              Visibility(
+                visible: !_visibility,
+              child: Text(_savedText))]),
+              
             ),
-            ElevatedButton(
+            Container(
+              child: 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Visibility(visible: _visibility,
+               child:ElevatedButton(
               onPressed: () {
+                _visibility? _hide():_show();
                 _saveText();
                 _loadSavedText();
               },
               child: const Text('저장'),
-            ),
+            ),)],),)
           ],
         ),
       ),
