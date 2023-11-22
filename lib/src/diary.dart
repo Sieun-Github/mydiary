@@ -22,7 +22,7 @@ List<XFile?> images = [];
 class _DiaryState extends State<Diary> {
   late SharedPreferences prefs;
   late TextEditingController _textEditingController = TextEditingController();
-  late bool _visibility;
+  bool _visibility = true;
   String _savedText = '';
 
   void _show(){
@@ -62,20 +62,20 @@ class _DiaryState extends State<Diary> {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
+      appBar: AppBar(backgroundColor:Colors.white10,
+      elevation:0,
+      leading:IconButton(
+                icon: const Icon(Icons.arrow_back),
+                color: Color(0xff291872),
+                onPressed: () {
+                _showAlertDialog();
+                },
+              ),),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                _showAlertDialog();
-                },
-              ),
-            ),
             Container(
               padding: const EdgeInsets.all(10),
               child: const Column(children: [
