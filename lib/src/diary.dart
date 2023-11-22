@@ -5,9 +5,10 @@ import 'home.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Diary extends StatefulWidget {
-  const Diary({Key? key}) : super(key: key);
+  const Diary({super.key});
 
   @override
   State<Diary> createState() => _DiaryState();
@@ -19,9 +20,33 @@ List<XFile?> multiImage = [];
 List<XFile?> images = [];
 
 class _DiaryState extends State<Diary> {
-  final TextEditingController _textEditingController = TextEditingController();
+  late SharedPreferences prefs;
+  late TextEditingController _textEditingController = TextEditingController();
+  String _savedText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedText();
+  }
+
+  _loadSavedText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedText = prefs.getString('$day') ?? "";
+    });
+  }
+
+  _saveText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('$day', _textEditingController.text);
+    _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
       body: Center(
@@ -34,7 +59,7 @@ class _DiaryState extends State<Diary> {
               child: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  _showAlertDialog();
+                _showAlertDialog();
                 },
               ),
             ),
@@ -170,23 +195,23 @@ class _DiaryState extends State<Diary> {
             ),
             Text(formattedDate),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: TextFormField(
                 controller: _textEditingController,
                 maxLength: 150,
                 maxLines: 8,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: '일기 작성',
+                  labelText: '일기 작성'
                 ),
               ),
             ),
             ElevatedButton(
               onPressed: () {
-                String diaryText = _textEditingController.text;
-                print('Diary Text Submitted: $diaryText');
+                _saveText();
+                _loadSavedText();
               },
-              child: const Text('작성'),
+              child: const Text('저장'),
             ),
           ],
         ),
@@ -194,6 +219,7 @@ class _DiaryState extends State<Diary> {
     );
   }
 
+  
   Future<void> _showAlertDialog() async {
     return showDialog(
       context: context,
@@ -206,13 +232,13 @@ class _DiaryState extends State<Diary> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('나가기'),
+              child: const Text('계속적기'),
             ),
             TextButton(
               onPressed: () {
                 GoRouter.of(context).go('/');
               },
-              child: const Text('계속적기'),
+              child: const Text('나가기'),
             ),
           ],
         );
