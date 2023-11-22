@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   todayTextStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 15),
                   selectedDecoration: BoxDecoration(
                     color: Color(0xFFd4d2e0),
