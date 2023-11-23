@@ -25,13 +25,13 @@ class _DiaryState extends State<Diary> {
   bool _visibility = true;
   String _savedText = '';
 
-  //visibility 설정
-  void _show(){
+  //vizsibility 설정
+  void _show() {
     setState(() {
-    _visibility = true;
-    
+      _visibility = true;
     });
   }
+
   void _hide() {
     setState(() {
       _visibility = false;
@@ -47,31 +47,32 @@ class _DiaryState extends State<Diary> {
   _loadSavedText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedText = prefs.getString('$day') ?? "";
+      _savedText = prefs.getString('${day}Text') ?? "";
     });
   }
 
   _saveText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('$day', _textEditingController.text);
+    prefs.setString('${day}Text', _textEditingController.text);
     _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
   }
 
   @override
   Widget build(BuildContext context) {
-
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
-      appBar: AppBar(backgroundColor:Colors.white10,
-      elevation:0,
-      leading:IconButton(
-                icon: const Icon(Icons.arrow_back),
-                color: Color(0xff291872),
-                onPressed: () {
-                _showAlertDialog();
-                },
-              ),),
+      appBar: AppBar(
+        backgroundColor: Colors.white10,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Color(0xff291872),
+          onPressed: () {
+            _showAlertDialog();
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -89,76 +90,77 @@ class _DiaryState extends State<Diary> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Visibility(
-                  visible:_visibility,
-                child:
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 0.5,
-                          blurRadius: 5)
-                    ],
-                  ),
-                  child: IconButton(
-                    onPressed: () async {
-                      XFile? pickedImage =
-                          await picker.pickImage(source: ImageSource.camera);
-                      if (pickedImage != null) {
-                        setState(
-                          () {
-                            images.clear();
-                            images.add(pickedImage);
-                          },
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.add_a_photo,
-                      size: 30,
-                      color: Colors.white,
+                  visible: _visibility,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlueAccent,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 0.5,
+                            blurRadius: 5)
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        XFile? pickedImage =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (pickedImage != null) {
+                          setState(
+                            () {
+                              images.clear();
+                              images.add(pickedImage);
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.add_a_photo,
+                        size: 30,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),),
-                Visibility(visible: _visibility,
-                  child:
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 0.5,
-                          blurRadius: 5)
-                    ],
-                  ),
-                  child: IconButton(
-                    onPressed: () async {
-                      XFile? pickedImage =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (pickedImage != null) {
-                        setState(
-                          () {
-                            images.clear();
-                            images.add(pickedImage);
-                          },
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      size: 30,
-                      color: Colors.white,
+                ),
+                Visibility(
+                  visible: _visibility,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlueAccent,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 0.5,
+                            blurRadius: 5)
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        XFile? pickedImage =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (pickedImage != null) {
+                          setState(
+                            () {
+                              images.clear();
+                              images.add(pickedImage);
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 30,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),)
+                )
               ],
             ),
             Container(
@@ -215,47 +217,48 @@ class _DiaryState extends State<Diary> {
             Text(formattedDate),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Stack (
-                children: [
-                  Visibility(
-                visible: _visibility,
-                child:
-               // 일기 작성 영역
-               TextFormField( 
-                controller: _textEditingController,
-                maxLength: 150,
-                maxLines: 8,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: '일기 작성',
+              child: Stack(children: [
+                Visibility(
+                  visible: _visibility,
+                  child:
+                      // 일기 작성 영역
+                      TextFormField(
+                    controller: _textEditingController,
+                    maxLength: 150,
+                    maxLines: 8,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '일기 작성',
+                    ),
+                  ),
                 ),
-              ),),
-              Visibility(
-                visible: !_visibility,
-              child: Text(_savedText))]),
-              
+                Visibility(visible: !_visibility, child: Text(_savedText))
+              ]),
             ),
             Container(
-              child: 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Visibility(visible: _visibility,
-               child:ElevatedButton(
-              onPressed: () {
-                _visibility? _hide():_show();
-                _saveText();
-                _loadSavedText();
-              },
-              child: const Text('저장'),
-            ),)],),)
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Visibility(
+                    visible: _visibility,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _visibility ? _hide() : _show();
+                        _saveText();
+                        _loadSavedText();
+                      },
+                      child: const Text('저장'),
+                    ),
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  
   Future<void> _showAlertDialog() async {
     return showDialog(
       context: context,
