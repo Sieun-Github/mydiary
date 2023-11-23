@@ -25,6 +25,7 @@ class _DiaryState extends State<Diary> {
   bool _visibility = true;
   String _savedText = '';
 
+  //visibility 설정
   void _show(){
     setState(() {
     _visibility = true;
