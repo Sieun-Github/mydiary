@@ -14,6 +14,7 @@ class Diary extends StatefulWidget {
   State<Diary> createState() => _DiaryState();
 }
 
+// 이미지 선택기능
 final picker = ImagePicker();
 XFile? image;
 List<XFile?> multiImage = [];
@@ -25,7 +26,7 @@ class _DiaryState extends State<Diary> {
   bool _visibility = true;
   String _savedText = '';
 
-  //vizsibility 설정
+  //visibility 설정
   void _show() {
     setState(() {
       _visibility = true;
