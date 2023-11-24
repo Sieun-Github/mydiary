@@ -25,13 +25,13 @@ class _DiaryState extends State<Diary> {
   bool _visibility = true;
   String _savedText = '';
 
-  //visibility 설정
-  void _show(){
+  //vizsibility 설정
+  void _show() {
     setState(() {
-    _visibility = true;
-    
+      _visibility = true;
     });
   }
+
   void _hide() {
     setState(() {
       _visibility = false;
@@ -48,20 +48,19 @@ class _DiaryState extends State<Diary> {
   _loadSavedText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedText = prefs.getString('$day') ?? "";
+      _savedText = prefs.getString('${day}Text') ?? "";
     });
   }
 
   _saveText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('$day', _textEditingController.text);
+    prefs.setString('${day}Text', _textEditingController.text);
     _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
   }
 
   //위젯
   @override
   Widget build(BuildContext context) {
-
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
