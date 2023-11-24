@@ -38,6 +38,7 @@ class _DiaryState extends State<Diary> {
     });
   }
 
+  // 데이터 저장 관련 함수
   @override
   void initState() {
     super.initState();
@@ -57,12 +58,14 @@ class _DiaryState extends State<Diary> {
     _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
   }
 
+  //위젯
   @override
   Widget build(BuildContext context) {
 
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
+      //앱바
       appBar: AppBar(backgroundColor:Colors.white10,
       elevation:0,
       leading:IconButton(
@@ -88,6 +91,7 @@ class _DiaryState extends State<Diary> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // 카메라 아이콘
                 Visibility(
                   visible:_visibility,
                 child:
@@ -124,6 +128,7 @@ class _DiaryState extends State<Diary> {
                     ),
                   ),
                 ),),
+                // 갤러리에서 추가 아이콘
                 Visibility(visible: _visibility,
                   child:
                 Container(
@@ -161,6 +166,7 @@ class _DiaryState extends State<Diary> {
                 ),)
               ],
             ),
+            // 선택된 이미지
             Container(
               margin: const EdgeInsets.all(10),
               child: GridView.builder(
@@ -212,15 +218,17 @@ class _DiaryState extends State<Diary> {
                 },
               ),
             ),
+            // 선택한 날짜
             Text(formattedDate),
+            // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Stack (
                 children: [
                   Visibility(
+                    // 일기 작성
                 visible: _visibility,
                 child:
-               // 일기 작성 영역
                TextFormField( 
                 controller: _textEditingController,
                 maxLength: 150,
@@ -231,12 +239,12 @@ class _DiaryState extends State<Diary> {
                 ),
               ),),
               Visibility(
+                // 일기 열람
                 visible: !_visibility,
               child: Text(_savedText))]),
               
             ),
-            Container(
-              child: 
+            // 저장 버튼
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -248,14 +256,14 @@ class _DiaryState extends State<Diary> {
                 _loadSavedText();
               },
               child: const Text('저장'),
-            ),)],),)
+            ),)],)
           ],
         ),
       ),
     );
   }
 
-  
+  // 뒤로가기 시 경고창 
   Future<void> _showAlertDialog() async {
     return showDialog(
       context: context,
