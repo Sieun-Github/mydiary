@@ -59,22 +59,24 @@ class _DiaryState extends State<Diary> {
     _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
   }
 
-  //위젯
+  // 위젯
   @override
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
-      //앱바
-      appBar: AppBar(backgroundColor:Colors.white10,
-      elevation:0,
-      leading:IconButton(
-                icon: const Icon(Icons.arrow_back),
-                color: Color(0xff291872),
-                onPressed: () {
-                _showAlertDialog();
-                },
-              ),),
+      // 앱바
+      appBar: AppBar(
+        backgroundColor: Colors.white10,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Color(0xff291872),
+          onPressed: () {
+            _showAlertDialog();
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -93,77 +95,78 @@ class _DiaryState extends State<Diary> {
               children: [
                 // 카메라 아이콘
                 Visibility(
-                  visible:_visibility,
-                child:
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 0.5,
-                          blurRadius: 5)
-                    ],
-                  ),
-                  child: IconButton(
-                    onPressed: () async {
-                      XFile? pickedImage =
-                          await picker.pickImage(source: ImageSource.camera);
-                      if (pickedImage != null) {
-                        setState(
-                          () {
-                            images.clear();
-                            images.add(pickedImage);
-                          },
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.add_a_photo,
-                      size: 30,
-                      color: Colors.white,
+                  visible: _visibility,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlueAccent,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 0.5,
+                            blurRadius: 5)
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        XFile? pickedImage =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (pickedImage != null) {
+                          setState(
+                            () {
+                              images.clear();
+                              images.add(pickedImage);
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.add_a_photo,
+                        size: 30,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),),
+                ),
                 // 갤러리에서 추가 아이콘
-                Visibility(visible: _visibility,
-                  child:
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 0.5,
-                          blurRadius: 5)
-                    ],
-                  ),
-                  child: IconButton(
-                    onPressed: () async {
-                      XFile? pickedImage =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (pickedImage != null) {
-                        setState(
-                          () {
-                            images.clear();
-                            images.add(pickedImage);
-                          },
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      size: 30,
-                      color: Colors.white,
+                Visibility(
+                  visible: _visibility,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlueAccent,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 0.5,
+                            blurRadius: 5)
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        XFile? pickedImage =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (pickedImage != null) {
+                          setState(
+                            () {
+                              images.clear();
+                              images.add(pickedImage);
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 30,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),)
+                )
               ],
             ),
             // 선택된 이미지
@@ -223,47 +226,50 @@ class _DiaryState extends State<Diary> {
             // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Stack (
-                children: [
-                  Visibility(
-                    // 일기 작성
-                visible: _visibility,
-                child:
-               TextFormField( 
-                controller: _textEditingController,
-                maxLength: 150,
-                maxLines: 8,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: '일기 작성',
+              child: Stack(children: [
+                Visibility(
+                  // 일기 작성
+                  visible: _visibility,
+                  child: TextFormField(
+                    controller: _textEditingController,
+                    maxLength: 150,
+                    maxLines: 8,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '일기 작성',
+                    ),
+                  ),
                 ),
-              ),),
-              Visibility(
-                // 일기 열람
-                visible: !_visibility,
-              child: Text(_savedText))]),
-              
+                Visibility(
+                    // 일기 열람
+                    visible: !_visibility,
+                    child: Text(_savedText))
+              ]),
             ),
             // 저장 버튼
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Visibility(visible: _visibility,
-               child:ElevatedButton(
-              onPressed: () {
-                _visibility? _hide():_show();
-                _saveText();
-                _loadSavedText();
-              },
-              child: const Text('저장'),
-            ),)],)
+                Visibility(
+                  visible: _visibility,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _visibility ? _hide() : _show();
+                      _saveText();
+                      _loadSavedText();
+                    },
+                    child: const Text('저장'),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
     );
   }
 
-  // 뒤로가기 시 경고창 
+  // 뒤로가기 시 경고창
   Future<void> _showAlertDialog() async {
     return showDialog(
       context: context,
