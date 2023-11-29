@@ -10,8 +10,15 @@ class FirstPage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'lib/images/music.png',
+          Positioned(
+            top: 120,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              child: Image.asset(
+                'assets/images/Music.png',
+              ),
+            ),
           ),
           Positioned(
             bottom: MediaQuery.of(context).padding.bottom,
