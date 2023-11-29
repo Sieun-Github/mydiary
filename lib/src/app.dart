@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mydiary/src/diary.dart';
+import 'package:mydiary/src/first_page.dart';
 import 'package:mydiary/src/home.dart';
 
 class App extends StatefulWidget {
@@ -19,6 +20,10 @@ class _AppState extends State<App> {
       routes: [
         GoRoute(
           path: '/',
+          builder: (context, state) => const FirstPage(),
+        ),
+        GoRoute(
+          path: '/home',
           builder: (context, state) => const Home(),
         ),
         GoRoute(
