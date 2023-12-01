@@ -286,7 +286,7 @@ class _DiaryState extends State<Diary> {
             ),
             TextButton(
               onPressed: () {
-                GoRouter.of(context).go('/');
+                GoRouter.of(context).go('/home');
               },
               child: const Text('나가기'),
             ),
