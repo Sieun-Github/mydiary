@@ -47,15 +47,25 @@ class _DiaryState extends State<Diary> {
   }
 
   _loadSavedText() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    late String text;
+    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    if (file.existsSync()) {
+      text = file.readAsStringSync();
+    } else {
+      text = '';
+    }
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedText = prefs.getString('${day}Text') ?? "";
+      //_savedText = prefs.getString('${day}Text') ?? "";
+      _savedText = text;
     });
   }
 
   _saveText() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('${day}Text', _textEditingController.text);
+    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    file.writeAsStringSync(_textEditingController.text);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString('${day}Text', _textEditingController.text);
     _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
   }
 
