@@ -23,6 +23,7 @@ class _DiaryState extends State<Diary> {
   late TextEditingController _textEditingController = TextEditingController();
   bool _visibility = true;
   String _savedText = '';
+  IResultSet? result;
 
   //visibility 설정
   void _show() {
@@ -42,7 +43,8 @@ class _DiaryState extends State<Diary> {
   void initState() {
     super.initState();
     dbConnect();
-    selectALL(day);
+    result = selectALL(day);
+    print(result);
   }
 
   _loadSavedText() {
@@ -331,7 +333,7 @@ class _DiaryState extends State<Diary> {
   }
 
   // DB에서 전체 데이터 불러오기
-  Future<IResultSet?> selectALL(day) async {
+  Future<IResultSet> selectALL(day) async {
     final conn = await dbConnect();
 
     // 연결 대기
@@ -343,9 +345,6 @@ class _DiaryState extends State<Diary> {
       result = await conn
           .execute("SELECT * FROM content WHERE date = :day", {"day": day});
       return result;
-
-      print("the result is: $result");
-      print(result);
     } catch (e) {
       print('Error : $e');
     } finally {
