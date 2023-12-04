@@ -5,7 +5,6 @@ import 'home.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Diary extends StatefulWidget {
   const Diary({super.key});
@@ -21,7 +20,6 @@ List<XFile?> multiImage = [];
 List<XFile?> images = [];
 
 class _DiaryState extends State<Diary> {
-  late SharedPreferences prefs;
   late TextEditingController _textEditingController = TextEditingController();
   bool _visibility = true;
   String _savedText = '';
@@ -46,17 +44,23 @@ class _DiaryState extends State<Diary> {
     _loadSavedText();
   }
 
-  _loadSavedText() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _loadSavedText() {
+    late String text;
+    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    if (file.existsSync()) {
+      text = file.readAsStringSync();
+    } else {
+      text = '';
+    }
     setState(() {
-      _savedText = prefs.getString('${day}Text') ?? "";
+      _savedText = text;
     });
   }
 
-  _saveText() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('${day}Text', _textEditingController.text);
-    _loadSavedText(); // 저장 후에는 불러와서 화면에 반영
+  _saveText() {
+    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    file.writeAsStringSync(_textEditingController.text);
+    _loadSavedText();
   }
 
   // 위젯
@@ -246,11 +250,13 @@ class _DiaryState extends State<Diary> {
                     child: Text(_savedText))
               ]),
             ),
-            // 저장 버튼
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            // 저장 or 수정 버튼
+            Stack(        
               children: [
-                Visibility(
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children: [ 
+                    Visibility(
                   visible: _visibility,
                   child: ElevatedButton(
                     onPressed: () {
@@ -260,6 +266,16 @@ class _DiaryState extends State<Diary> {
                     },
                     child: const Text('저장'),
                   ),
+                ),
+                Visibility(
+                  visible: !_visibility,
+                child: ElevatedButton(
+                    onPressed: () {
+                      _visibility ? _hide() : _show();
+                      _saveText();
+                      _loadSavedText();
+                    },
+                    child: const Text('수정'),))],
                 )
               ],
             )
