@@ -5,6 +5,7 @@ import 'home.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
+import 'package:mysql_client/mysql_client.dart';
 
 class Diary extends StatefulWidget {
   const Diary({super.key});
@@ -16,7 +17,6 @@ class Diary extends StatefulWidget {
 // 이미지 선택기능
 final picker = ImagePicker();
 XFile? image;
-List<XFile?> multiImage = [];
 List<XFile?> images = [];
 
 class _DiaryState extends State<Diary> {
@@ -41,10 +41,11 @@ class _DiaryState extends State<Diary> {
   @override
   void initState() {
     super.initState();
-    _loadSavedText();
+    dbConnect();
+    selectALL(day);
   }
 
-    _loadSavedText() {
+  _loadSavedText() {
     late String text;
     File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
     if (file.existsSync()) {
@@ -251,31 +252,33 @@ class _DiaryState extends State<Diary> {
               ]),
             ),
             // 저장 or 수정 버튼
-            Stack(        
+            Stack(
               children: [
                 Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ 
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Visibility(
-                  visible: _visibility,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('저장'),
-                  ),
-                ),
-                Visibility(
-                  visible: !_visibility,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('수정'),))],
+                      visible: _visibility,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _visibility ? _hide() : _show();
+                          _saveText();
+                          _loadSavedText();
+                        },
+                        child: const Text('저장'),
+                      ),
+                    ),
+                    Visibility(
+                        visible: !_visibility,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _visibility ? _hide() : _show();
+                            _saveText();
+                            _loadSavedText();
+                          },
+                          child: const Text('수정'),
+                        ))
+                  ],
                 )
               ],
             )
@@ -311,4 +314,110 @@ class _DiaryState extends State<Diary> {
       },
     );
   }
+
+  // DB 연결
+  Future<MySQLConnection> dbConnect() async {
+    print("Connecting to mysql server...");
+
+    // MySQL 접속 설정
+    final conn = await MySQLConnection.createConnection(
+      host: '127.0.0.1',
+      port: 3306,
+      userName: 'root',
+      password: 'qwer1234',
+      databaseName: 'diary', // optional
+    );
+    return conn;
+  }
+
+  // DB에서 전체 데이터 불러오기
+  Future<IResultSet?> selectALL(day) async {
+    final conn = await dbConnect();
+
+    // 연결 대기
+    await conn.connect();
+    print("Connected");
+
+    IResultSet result;
+    try {
+      result = await conn
+          .execute("SELECT * FROM content WHERE date = :day", {"day": day});
+      return result;
+
+      print("the result is: $result");
+      print(result);
+    } catch (e) {
+      print('Error : $e');
+    } finally {
+      await conn.close();
+      print("Disconneted");
+    }
+    // 데이터가 없으면 null 값 반환
+    return null;
+  }
+
+  //text 내용 가져오기
+  Future<IResultSet?> text(day) async {
+    final conn = await dbConnect();
+
+    IResultSet result;
+    try {
+      result = await conn
+          .execute("SELECT text FROM content WHERE date = :day", {"day": day});
+      if (result.numOfRows > 0) {
+        return result;
+      }
+    } catch (e) {
+      print('Error : $e');
+    } finally {
+      await conn.close();
+    }
+    // 데이터가 없으면 null 값 반환
+    return null;
+  }
 }
+  // Future<void> getdata() async {
+  //   List datalist=[];
+
+  //   var result = await sel
+  // }
+// Future<void> _loadSavedText(DateTime date) async {
+//     // MySQL 접속 설정
+//     final conn = await MySQLConnection.createConnection(
+//       host: '127.0.0.1',
+//       port: 3306,
+//       userName: 'root',
+//       password: 'qwer1234',
+//       databaseName: 'diary', // optional
+//     );
+//   IResultSet? result;
+
+//   result = await conn.execute("select * from content where date = :day",{"day":date});
+// }
+// Future<void> _saveText() async {
+//   // MySQL 접속 설정
+//     final conn = await MySQLConnection.createConnection(
+//       host: '127.0.0.1',
+//       port: 3306,
+//       userName: 'root',
+//       password: 'qwer1234',
+//       databaseName: 'diary', // optional
+//     );
+//   IResultSet? result;
+  
+//   result = await conn.execute("INSERT INTO content (date, text, savetime, emotion, music) VALUES (:day, :)");
+// }
+// Future<void> _editText() async {
+//    // MySQL 접속 설정
+//     final conn = await MySQLConnection.createConnection(
+//       host: '127.0.0.1',
+//       port: 3306,
+//       userName: 'root',
+//       password: 'qwer1234',
+//       databaseName: 'diary', // optional
+//     );
+//   IResultSet? result;
+  
+// result = await conn.execute("UPDATE INTO content (date, text, savetime, emotion, music)");
+// }
+ 
