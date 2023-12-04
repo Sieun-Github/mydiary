@@ -19,11 +19,15 @@ final picker = ImagePicker();
 XFile? image;
 List<XFile?> images = [];
 
+late String? text;
+late DateTime? canedit;
+late String? emotion;
+late String? music;
+
 class _DiaryState extends State<Diary> {
   late TextEditingController _textEditingController = TextEditingController();
   bool _visibility = true;
   String _savedText = '';
-  IResultSet? result;
 
   //visibility 설정
   void _show() {
@@ -42,9 +46,7 @@ class _DiaryState extends State<Diary> {
   @override
   void initState() {
     super.initState();
-    dbConnect();
-    result = selectALL(day);
-    print(result);
+    db('load');
   }
 
   _loadSavedText() {
@@ -317,10 +319,9 @@ class _DiaryState extends State<Diary> {
     );
   }
 
-  // DB 연결
-  Future<MySQLConnection> dbConnect() async {
-    print("Connecting to mysql server...");
-
+// 함수의 파라미터를 받아 특정 쿼리를 실행하는 예시
+// queryState : 사용자가 입력한 문자열을 확인하여 조건에 맞는 쿼리 실행
+  Future<void> db(String query) async {
     // MySQL 접속 설정
     final conn = await MySQLConnection.createConnection(
       host: '127.0.0.1',
@@ -329,94 +330,38 @@ class _DiaryState extends State<Diary> {
       password: 'qwer1234',
       databaseName: 'diary', // optional
     );
-    return conn;
-  }
-
-  // DB에서 전체 데이터 불러오기
-  Future<IResultSet> selectALL(day) async {
-    final conn = await dbConnect();
-
-    // 연결 대기
     await conn.connect();
     print("Connected");
 
-    IResultSet result;
-    try {
-      result = await conn
-          .execute("SELECT * FROM content WHERE date = :day", {"day": day});
-      return result;
-    } catch (e) {
-      print('Error : $e');
-    } finally {
-      await conn.close();
-      print("Disconneted");
-    }
-    // 데이터가 없으면 null 값 반환
-    return null;
-  }
+    // 쿼리 실행 결과를 저장할 변수
+    IResultSet? result;
 
-  //text 내용 가져오기
-  Future<IResultSet?> text(day) async {
-    final conn = await dbConnect();
-
-    IResultSet result;
-    try {
+    // 모든 결과 출력
+    if (query == 'load') {
       result = await conn
-          .execute("SELECT text FROM content WHERE date = :day", {"day": day});
-      if (result.numOfRows > 0) {
-        return result;
+          .execute("SELECT * FROM content WHERE date =:day", {"day": day});
+
+      // 쿼리 실행 성공
+      if (result != null && result.isNotEmpty) {
+        for (final row in result.rows) {
+          text = row.colByName('text')!;
+          canedit = DateTime.parse(row.colByName('savetime')!);
+          emotion = row.colByName('emotion')!;
+          music = row.colByName('music')!;
+          print(text);
+          print(canedit);
+          print(emotion);
+          print(music);
+          // {date: 2023-12-03, text: 안녕하세요. 12월 3일 데이터입니다., savetime: 2023-12-04 17:40:00, emotion: 슬픔, music: https:~~.mp3}
+          // print(row.assoc());
+        }
       }
-    } catch (e) {
-      print('Error : $e');
-    } finally {
-      await conn.close();
     }
-    // 데이터가 없으면 null 값 반환
-    return null;
+    // 쿼리 실행 실패
+    else {
+      print('failed');
+    }
+
+    await conn.close();
   }
 }
-  // Future<void> getdata() async {
-  //   List datalist=[];
-
-  //   var result = await sel
-  // }
-// Future<void> _loadSavedText(DateTime date) async {
-//     // MySQL 접속 설정
-//     final conn = await MySQLConnection.createConnection(
-//       host: '127.0.0.1',
-//       port: 3306,
-//       userName: 'root',
-//       password: 'qwer1234',
-//       databaseName: 'diary', // optional
-//     );
-//   IResultSet? result;
-
-//   result = await conn.execute("select * from content where date = :day",{"day":date});
-// }
-// Future<void> _saveText() async {
-//   // MySQL 접속 설정
-//     final conn = await MySQLConnection.createConnection(
-//       host: '127.0.0.1',
-//       port: 3306,
-//       userName: 'root',
-//       password: 'qwer1234',
-//       databaseName: 'diary', // optional
-//     );
-//   IResultSet? result;
-  
-//   result = await conn.execute("INSERT INTO content (date, text, savetime, emotion, music) VALUES (:day, :)");
-// }
-// Future<void> _editText() async {
-//    // MySQL 접속 설정
-//     final conn = await MySQLConnection.createConnection(
-//       host: '127.0.0.1',
-//       port: 3306,
-//       userName: 'root',
-//       password: 'qwer1234',
-//       databaseName: 'diary', // optional
-//     );
-//   IResultSet? result;
-  
-// result = await conn.execute("UPDATE INTO content (date, text, savetime, emotion, music)");
-// }
- 
