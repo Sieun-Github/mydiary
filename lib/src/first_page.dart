@@ -7,6 +7,7 @@ class FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 253, 224, 250),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -16,7 +17,7 @@ class FirstPage extends StatelessWidget {
             right: 0,
             child: SizedBox(
               child: Image.asset(
-                'assets/images/Music.png',
+                'assets/logo/mulogo.png',
               ),
             ),
           ),
@@ -35,17 +36,17 @@ class FirstPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 80),
                 ElevatedButton(
                   onPressed: () {
                     GoRouter.of(context).go('/home');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent,
+                    backgroundColor: Color.fromARGB(255, 206, 126, 206),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    minimumSize: const Size(150, 50),
+                    minimumSize: const Size(120, 50),
                   ),
                   child: const Text(
                     '시작하기',

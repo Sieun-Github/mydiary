@@ -44,9 +44,10 @@ class _DiaryState extends State<Diary> {
     _loadSavedText();
   }
 
-    _loadSavedText() {
+  _loadSavedText() {
     late String text;
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    File file =
+        File('assets/texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
     if (file.existsSync()) {
       text = file.readAsStringSync();
     } else {
@@ -58,7 +59,8 @@ class _DiaryState extends State<Diary> {
   }
 
   _saveText() {
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+    File file =
+        File('assets/texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
     file.writeAsStringSync(_textEditingController.text);
     _loadSavedText();
   }
@@ -69,6 +71,7 @@ class _DiaryState extends State<Diary> {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 253, 224, 250),
       // 앱바
       appBar: AppBar(
         backgroundColor: Colors.white10,
@@ -104,7 +107,7 @@ class _DiaryState extends State<Diary> {
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.lightBlueAccent,
+                      color: Color.fromARGB(255, 206, 126, 206),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -141,7 +144,7 @@ class _DiaryState extends State<Diary> {
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.lightBlueAccent,
+                      color: Color.fromARGB(255, 206, 126, 206),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -251,31 +254,41 @@ class _DiaryState extends State<Diary> {
               ]),
             ),
             // 저장 or 수정 버튼
-            Stack(        
+            Stack(
               children: [
                 Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ 
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Visibility(
-                  visible: _visibility,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('저장'),
-                  ),
-                ),
-                Visibility(
-                  visible: !_visibility,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('수정'),))],
+                      visible: _visibility,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _visibility ? _hide() : _show();
+                          _saveText();
+                          _loadSavedText();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Color.fromARGB(255, 206, 126, 206), // 저장 버튼 색상
+                        ),
+                        child: const Text('저장'),
+                      ),
+                    ),
+                    Visibility(
+                        visible: !_visibility,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _visibility ? _hide() : _show();
+                            _saveText();
+                            _loadSavedText();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Color.fromARGB(255, 206, 126, 206), // 저장 버튼 색상
+                          ),
+                          child: const Text('수정'),
+                        ))
+                  ],
                 )
               ],
             )
