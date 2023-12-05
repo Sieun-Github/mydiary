@@ -281,10 +281,10 @@ class _DiaryState extends State<Diary> {
                     maxLines: 8,
                     decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff291872), width: 2.0),
+                        borderSide: BorderSide(color: Color(0xff291872)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff291872), width: 2.0),
+                        borderSide: BorderSide(color: Color(0xff291872)),
                       ),
                       labelText: '일기 작성',
                       labelStyle: TextStyle(color: Color(0xff291872))

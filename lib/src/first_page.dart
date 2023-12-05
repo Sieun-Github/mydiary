@@ -7,58 +7,99 @@ class FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        // fit: StackFit.expand,
+      body: Center(
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Positioned(
-            top: 120,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              child: Image.asset(
-                'assets/images/Music.png',
+          SizedBox(child: Image.asset('assets/images/Music.png')),
+          const SizedBox(height: 100,),
+          Text(
+            'TITLE',
+            style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff291872)),
+          ),
+          const SizedBox(
+            height: 100,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              GoRouter.of(context).go('/home');
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 24),
+              backgroundColor: Color(0xffdbd5f6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
+              minimumSize: const Size(10, 50),
+            ),
+            child: const Text(
+              'START',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          Positioned(
-            bottom: MediaQuery.of(context).padding.bottom,
-            left: 0,
-            right: 0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  '음악 추천 다이어리를\n 시작해보세요!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff291872)),
-                ),
-                const SizedBox(height: 100),
-                ElevatedButton(
-                  onPressed: () {
-                    GoRouter.of(context).go('/home');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    minimumSize: const Size(150, 50),
-                  ),
-                  child: const Text(
-                    '시작하기',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 100),
-              ],
-            ),
-          ),
+          const SizedBox(height: 100),
         ],
       ),
+      )
+      // body: Stack(
+      //   // fit: StackFit.expand,
+      //   children: [
+      //     Positioned(
+      //       top: 120,
+      //       left: 0,
+      //       right: 0,
+      //       child: SizedBox(
+      //         child: Image.asset(
+      //           'assets/images/Music.png',
+      //         ),
+      //       ),
+      //     ),
+      //     Positioned(
+      //       bottom: MediaQuery.of(context).padding.bottom,
+      //       left: 0,
+      //       right: 0,
+      //       child: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.stretch,
+      //         children: [
+      //           const Text(
+      //             '음악 추천 다이어리를\n 시작해보세요!',
+      //             textAlign: TextAlign.center,
+      //             style: TextStyle(
+      //                 fontSize: 28,
+      //                 fontWeight: FontWeight.bold,
+      //                 color: Color(0xff291872)),
+      //           ),
+      //           const SizedBox(height: 100),
+      //           const SizedBox(height:100,),
+      //           ElevatedButton(
+      //             onPressed: () {
+      //               GoRouter.of(context).go('/home');
+      //             },
+      //             style: ElevatedButton.styleFrom(
+      //               padding: EdgeInsets.symmetric(horizontal: 100, vertical: 24),
+      //               backgroundColor: Color(0xffdbd5f6),
+      //               shape: RoundedRectangleBorder(
+      //                 borderRadius: BorderRadius.circular(30),
+      //               ),
+      //               minimumSize: const Size(10, 50),
+      //             ),
+      //             child: const Text(
+      //               'START',
+      //               textAlign: TextAlign.center,
+      //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      //             ),
+      //           ),
+      //           const SizedBox(height: 100),
+      //         ],
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
