@@ -41,7 +41,7 @@ class FirstPage extends StatelessWidget {
             child: const Text(
               'START',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xff291872)),
             ),
           ),
           const SizedBox(height: 100),

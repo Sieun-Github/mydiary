@@ -34,21 +34,16 @@ final picker = ImagePicker();
 XFile? image;
 List<XFile?> images = [];
 
-late String? text;
-late DateTime? canedit;
-late String? emotion;
-late String? music;
-
 class _DiaryState extends State<Diary> {
   late TextEditingController _textEditingController = TextEditingController();
   bool _visibility = true;
   bool _editbtn = false;
   bool _savebtn = true;
-  String _date = '';
-  String _savetime = '';
-  String _emotion = '';
-  String _music = '';
-  String _savedText = '';
+  String? _date = '';
+  String? _savetime = '';
+  String? _emotion = '';
+  String? _music = '';
+  String? _savedText = '';
   // late Future<List?> fromdb;
 
   //visibility 설정
@@ -88,7 +83,7 @@ class _DiaryState extends State<Diary> {
   @override
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
-    String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
+    String formattedDate = DateFormat('yyyy. MM. dd').format(day);
     return Scaffold(
       // 앱바 (뒤로가기)
       appBar: AppBar(
@@ -98,15 +93,7 @@ class _DiaryState extends State<Diary> {
           icon: const Icon(Icons.arrow_back),
           color: Color(0xff291872),
           onPressed: () {
-            File file =
-                File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
-            late String savedText;
-            if (file.existsSync()) {
-              savedText = file.readAsStringSync();
-            } else {
-              savedText = '';
-            }
-            if (_textEditingController.text != savedText) {
+            if (_textEditingController.text != _savedText) {
               _showAlertDialog();
             } else {
               GoRouter.of(context).go('/home');
@@ -122,7 +109,7 @@ class _DiaryState extends State<Diary> {
           children: [
             Text(
               formattedDate,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Color(0xff291872),
                   fontSize: 27,
                   fontWeight: FontWeight.bold),
@@ -321,7 +308,7 @@ class _DiaryState extends State<Diary> {
                             _savedText = _textEditingController.text;
                           });
                           saveDB();
-                          loadDB();
+                          // loadDB();
                         },
                         child: const Text(
                           '저장',
@@ -343,6 +330,7 @@ class _DiaryState extends State<Diary> {
                               _savedText = _textEditingController.text;
                             });
                             editDB();
+                            // loadDB();
                           },
                           child: const Text(
                             '수정',
@@ -380,7 +368,8 @@ class _DiaryState extends State<Diary> {
               },
               child: const Text(
                 '계속 적기',
-                style: TextStyle(color: Color(0xff291872)),
+                style: TextStyle(
+                    color: Color(0xff291872), fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
@@ -389,7 +378,8 @@ class _DiaryState extends State<Diary> {
               },
               child: const Text(
                 '나가기',
-                style: TextStyle(color: Colors.red),
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -409,20 +399,33 @@ class _DiaryState extends State<Diary> {
 
       if (result.numOfRows > 0) {
         for (final row in result.rows) {
-          // print(row.assoc().runtimeType);
           print(row.assoc());
           setState(() {
-            _savedText = row.colByName('text')!;
-            _savetime = row.colByName('savetime')!;
-            _emotion = row.colByName('emotion')!;
-            _music = row.colByName('music')!;
+            if (row.colByName('text') == null) {
+              _savedText = null;
+            } else {
+              _savedText = row.colByName('text');
+            }
+            if (row.colByName('savetime') == null) {
+              _savetime = null;
+            } else {
+              _savetime = row.colByName('savetime');
+            }
+            if (row.colByName('emotion') == null) {
+              _emotion = null;
+            } else {
+              _emotion = row.colByName('emotion');
+            }
+            if (row.colByName('music') == null) {
+              _music = null;
+            } else {
+              _music = row.colByName('music');
+            }
           });
-          // print("savetime: $_savetime");
-          // print(_savetime.runtimeType);
         }
       }
     } catch (e) {
-      print('Error : $e');
+      print('load Error : $e');
     } finally {
       await conn.close();
     }
@@ -444,19 +447,17 @@ class _DiaryState extends State<Diary> {
 
       if (result.numOfRows > 0) {
         for (final row in result.rows) {
-          print(row.assoc());
           setState(() {
             _savedText = row.colByName('text')!;
             _savetime = row.colByName('savetime')!;
             _emotion = row.colByName('emotion')!;
             _music = row.colByName('music')!;
           });
-          // print("savedtext: $_savedText");
-          // print("savetime: $_savetime");
         }
+        loadDB();
       }
     } catch (e) {
-      print('Error : $e');
+      print(' save Error : $e');
     } finally {
       await conn.close();
     }
@@ -474,7 +475,6 @@ class _DiaryState extends State<Diary> {
 
       if (result.numOfRows > 0) {
         for (final row in result.rows) {
-          print(row.assoc());
           setState(() {
             _date = row.colByName('date')!;
             _savedText = row.colByName('text')!;
@@ -482,13 +482,11 @@ class _DiaryState extends State<Diary> {
             _emotion = row.colByName('emotion')!;
             _music = row.colByName('music')!;
           });
-          print("savedtext: $_savedText");
-          print("savetime: $_savetime");
-          loadDB();
         }
+        loadDB();
       }
     } catch (e) {
-      print('Error : $e');
+      print('edit Error : $e');
     } finally {
       await conn.close();
     }
