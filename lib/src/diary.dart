@@ -122,7 +122,10 @@ class _DiaryState extends State<Diary> {
           children: [
             Text(
               formattedDate,
-              style: TextStyle(color: Color(0xff291872),fontSize: 27, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Color(0xff291872),
+                  fontSize: 27,
+                  fontWeight: FontWeight.bold),
             ),
             Container(
               padding: const EdgeInsets.only(top: 10),
@@ -275,20 +278,18 @@ class _DiaryState extends State<Diary> {
                   visible: _visibility,
                   child: TextFormField(
                     cursorColor: Color(0xff291872),
-                    
                     controller: _textEditingController,
                     maxLength: 150,
                     maxLines: 8,
                     decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff291872)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff291872)),
-                      ),
-                      labelText: '일기 작성',
-                      labelStyle: TextStyle(color: Color(0xff291872))
-                    ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff291872)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff291872)),
+                        ),
+                        labelText: '일기 작성',
+                        labelStyle: TextStyle(color: Color(0xff291872))),
                   ),
                 ),
                 Visibility(
@@ -367,20 +368,29 @@ class _DiaryState extends State<Diary> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('경고', style: TextStyle(fontWeight: FontWeight.bold),),
+          title: const Text(
+            '경고',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('계속 적기', style: TextStyle(color: Color(0xff291872)),),
+              child: const Text(
+                '계속 적기',
+                style: TextStyle(color: Color(0xff291872)),
+              ),
             ),
             TextButton(
               onPressed: () {
                 GoRouter.of(context).go('/home');
               },
-              child: const Text('나가기', style: TextStyle(color: Colors.red),),
+              child: const Text(
+                '나가기',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
