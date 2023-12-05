@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white,
                       fontSize: 15),
                   selectedDecoration: BoxDecoration(
-                    color: Color(0xFFd4d2e0),
+                    color: Color(0xffdbd5f6),
                     shape: BoxShape.circle,
                   ),
                   selectedTextStyle: TextStyle(

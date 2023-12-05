@@ -8,7 +8,7 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
+        // fit: StackFit.expand,
         children: [
           Positioned(
             top: 120,
@@ -28,12 +28,12 @@ class FirstPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  '음악추천 다이어리를\n 시작해보세요!',
+                  '음악 추천 다이어리를\n 시작해보세요!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      color: Color(0xff291872)),
                 ),
                 const SizedBox(height: 100),
                 ElevatedButton(

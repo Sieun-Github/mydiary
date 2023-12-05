@@ -14,6 +14,21 @@ class Diary extends StatefulWidget {
   State<Diary> createState() => _DiaryState();
 }
 
+Future<MySQLConnection> dbcon() async {
+  // MySQL 접속 설정
+  final conn = await MySQLConnection.createConnection(
+    host: '127.0.0.1',
+    port: 3306,
+    userName: 'root',
+    password: 'qwer1234',
+    databaseName: 'diary', // optional
+  );
+  await conn.connect();
+  print("Connected");
+
+  return conn;
+}
+
 // 이미지 선택기능
 final picker = ImagePicker();
 XFile? image;
@@ -27,18 +42,25 @@ late String? music;
 class _DiaryState extends State<Diary> {
   late TextEditingController _textEditingController = TextEditingController();
   bool _visibility = true;
+  bool _editbtn = false;
+  bool _savebtn = true;
+  String _date = '';
+  String _savetime = '';
+  String _emotion = '';
+  String _music = '';
   String _savedText = '';
+  // late Future<List?> fromdb;
 
   //visibility 설정
   void _show() {
     setState(() {
-      _visibility = true;
+      _visibility = !_visibility;
     });
   }
 
   void _hide() {
     setState(() {
-      _visibility = false;
+      _visibility = !_visibility;
     });
   }
 
@@ -46,26 +68,20 @@ class _DiaryState extends State<Diary> {
   @override
   void initState() {
     super.initState();
-    db('load');
-  }
+    loadDB();
+    //   setvisible();
+    // }
 
-  _loadSavedText() {
-    late String text;
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
-    if (file.existsSync()) {
-      text = file.readAsStringSync();
-    } else {
-      text = '';
-    }
-    setState(() {
-      _savedText = text;
-    });
-  }
-
-  _saveText() {
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
-    file.writeAsStringSync(_textEditingController.text);
-    _loadSavedText();
+    // _savetime값.isbefore.now 일 때 _visibility, _
+    // now = DateFormat('HH:mm:ss').format(DateTime.now())
+    // setvisible() {
+    //   if (DateTime.parse(_savetime).isAfter(DateTime.now())) {
+    //     setState(() {
+    //       _visibility = true;
+    //       _savebtn = false;
+    //       _editbtn = true;
+    //     });
+    //   }
   }
 
   // 위젯
@@ -74,7 +90,7 @@ class _DiaryState extends State<Diary> {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd.').format(day);
     return Scaffold(
-      // 앱바
+      // 앱바 (뒤로가기)
       appBar: AppBar(
         backgroundColor: Colors.white10,
         elevation: 0,
@@ -82,23 +98,41 @@ class _DiaryState extends State<Diary> {
           icon: const Icon(Icons.arrow_back),
           color: Color(0xff291872),
           onPressed: () {
-            _showAlertDialog();
+            File file =
+                File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
+            late String savedText;
+            if (file.existsSync()) {
+              savedText = file.readAsStringSync();
+            } else {
+              savedText = '';
+            }
+            if (_textEditingController.text != savedText) {
+              _showAlertDialog();
+            } else {
+              GoRouter.of(context).go('/home');
+            }
           },
         ),
       ),
+      // 앱 페이지
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              formattedDate,
+              style: TextStyle(color: Color(0xff291872),fontSize: 27, fontWeight: FontWeight.bold),
+            ),
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.only(top: 10),
               child: const Column(children: [
                 SizedBox(
-                  height: 50,
+                  height: 30,
                 )
               ]),
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -109,7 +143,7 @@ class _DiaryState extends State<Diary> {
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.lightBlueAccent,
+                      color: Color(0xffdbd5f6),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -134,7 +168,7 @@ class _DiaryState extends State<Diary> {
                       icon: const Icon(
                         Icons.add_a_photo,
                         size: 30,
-                        color: Colors.white,
+                        color: Color(0xff291872),
                       ),
                     ),
                   ),
@@ -146,7 +180,7 @@ class _DiaryState extends State<Diary> {
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.lightBlueAccent,
+                      color: Color(0xffdbd5f6),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -171,7 +205,7 @@ class _DiaryState extends State<Diary> {
                       icon: const Icon(
                         Icons.add_photo_alternate_outlined,
                         size: 30,
-                        color: Colors.white,
+                        color: Color(0xff291872),
                       ),
                     ),
                   ),
@@ -215,7 +249,7 @@ class _DiaryState extends State<Diary> {
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.close,
-                              color: Colors.white, size: 15),
+                              color: Color(0xffdbd5f6), size: 15),
                           onPressed: () {
                             setState(
                               () {
@@ -231,7 +265,7 @@ class _DiaryState extends State<Diary> {
               ),
             ),
             // 선택한 날짜
-            Text(formattedDate),
+
             // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -240,19 +274,27 @@ class _DiaryState extends State<Diary> {
                   // 일기 작성
                   visible: _visibility,
                   child: TextFormField(
+                    cursorColor: Color(0xff291872),
+                    
                     controller: _textEditingController,
                     maxLength: 150,
                     maxLines: 8,
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff291872), width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff291872), width: 2.0),
+                      ),
                       labelText: '일기 작성',
+                      labelStyle: TextStyle(color: Color(0xff291872))
                     ),
                   ),
                 ),
                 Visibility(
                     // 일기 열람
                     visible: !_visibility,
-                    child: Text(_savedText))
+                    child: Text(_savedText!))
               ]),
             ),
             // 저장 or 수정 버튼
@@ -262,25 +304,52 @@ class _DiaryState extends State<Diary> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Visibility(
-                      visible: _visibility,
+                      visible: _savebtn,
                       child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Color(0xffdbd5f6))),
                         onPressed: () {
-                          _visibility ? _hide() : _show();
-                          _saveText();
-                          _loadSavedText();
+                          // _visibility ? _hide() : _show();
+                          setState(() {
+                            _savebtn = false;
+                            _editbtn = true;
+                            _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                                .format(
+                                    DateTime.now().add(Duration(hours: 24)));
+                            _savedText = _textEditingController.text;
+                          });
+                          saveDB();
+                          loadDB();
                         },
-                        child: const Text('저장'),
+                        child: const Text(
+                          '저장',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff291872),
+                              backgroundColor: Color(0xffdbd5f6)),
+                        ),
                       ),
                     ),
                     Visibility(
-                        visible: !_visibility,
+                        visible: _editbtn,
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xffdbd5f6))),
                           onPressed: () {
-                            _visibility ? _hide() : _show();
-                            _saveText();
-                            _loadSavedText();
+                            setState(() {
+                              _savedText = _textEditingController.text;
+                            });
+                            editDB();
                           },
-                          child: const Text('수정'),
+                          child: const Text(
+                            '수정',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff291872),
+                                backgroundColor: Color(0xffdbd5f6)),
+                          ),
                         ))
                   ],
                 )
@@ -298,20 +367,20 @@ class _DiaryState extends State<Diary> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('경고'),
+          title: const Text('경고', style: TextStyle(fontWeight: FontWeight.bold),),
           content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('계속적기'),
+              child: const Text('계속 적기', style: TextStyle(color: Color(0xff291872)),),
             ),
             TextButton(
               onPressed: () {
                 GoRouter.of(context).go('/home');
               },
-              child: const Text('나가기'),
+              child: const Text('나가기', style: TextStyle(color: Colors.red),),
             ),
           ],
         );
@@ -319,49 +388,99 @@ class _DiaryState extends State<Diary> {
     );
   }
 
-// 함수의 파라미터를 받아 특정 쿼리를 실행하는 예시
-// queryState : 사용자가 입력한 문자열을 확인하여 조건에 맞는 쿼리 실행
-  Future<void> db(String query) async {
-    // MySQL 접속 설정
-    final conn = await MySQLConnection.createConnection(
-      host: '127.0.0.1',
-      port: 3306,
-      userName: 'root',
-      password: 'qwer1234',
-      databaseName: 'diary', // optional
-    );
-    await conn.connect();
-    print("Connected");
+  // DB로부터 데이터 가져오기
+  loadDB() async {
+    final conn = await dbcon();
+    IResultSet result;
 
-    // 쿼리 실행 결과를 저장할 변수
-    IResultSet? result;
-
-    // 모든 결과 출력
-    if (query == 'load') {
+    try {
       result = await conn
-          .execute("SELECT * FROM content WHERE date =:day", {"day": day});
+          .execute("SELECT * FROM content WHERE date = :day", {"day": day});
 
-      // 쿼리 실행 성공
-      if (result != null && result.isNotEmpty) {
+      if (result.numOfRows > 0) {
         for (final row in result.rows) {
-          text = row.colByName('text')!;
-          canedit = DateTime.parse(row.colByName('savetime')!);
-          emotion = row.colByName('emotion')!;
-          music = row.colByName('music')!;
-          print(text);
-          print(canedit);
-          print(emotion);
-          print(music);
-          // {date: 2023-12-03, text: 안녕하세요. 12월 3일 데이터입니다., savetime: 2023-12-04 17:40:00, emotion: 슬픔, music: https:~~.mp3}
-          // print(row.assoc());
+          // print(row.assoc().runtimeType);
+          print(row.assoc());
+          setState(() {
+            _savedText = row.colByName('text')!;
+            _savetime = row.colByName('savetime')!;
+            _emotion = row.colByName('emotion')!;
+            _music = row.colByName('music')!;
+          });
+          // print("savetime: $_savetime");
+          // print(_savetime.runtimeType);
         }
       }
+    } catch (e) {
+      print('Error : $e');
+    } finally {
+      await conn.close();
     }
-    // 쿼리 실행 실패
-    else {
-      print('failed');
-    }
+  }
 
-    await conn.close();
+  // DB에 date, text 데이터 추가
+  saveDB() async {
+    final conn = await dbcon();
+    IResultSet result;
+
+    try {
+      result = await conn.execute(
+          "INSERT INTO content (date, text, savetime) VALUES (:day, :text, :savetime)",
+          {
+            "day": DateFormat('yyyy-MM-dd').format(day),
+            "text": _savedText,
+            "savetime": _savetime
+          });
+
+      if (result.numOfRows > 0) {
+        for (final row in result.rows) {
+          print(row.assoc());
+          setState(() {
+            _savedText = row.colByName('text')!;
+            _savetime = row.colByName('savetime')!;
+            _emotion = row.colByName('emotion')!;
+            _music = row.colByName('music')!;
+          });
+          // print("savedtext: $_savedText");
+          // print("savetime: $_savetime");
+        }
+      }
+    } catch (e) {
+      print('Error : $e');
+    } finally {
+      await conn.close();
+    }
+  }
+
+  // 현재 존재하는 키값의 text column 데이터 편집
+  editDB() async {
+    final conn = await dbcon();
+    IResultSet result;
+
+    try {
+      result = await conn.execute(
+          "UPDATE content SET text =:text WHERE (date = :day)",
+          {"text": _savedText, "day": DateFormat('yyyy-MM-dd').format(day)});
+
+      if (result.numOfRows > 0) {
+        for (final row in result.rows) {
+          print(row.assoc());
+          setState(() {
+            _date = row.colByName('date')!;
+            _savedText = row.colByName('text')!;
+            _savetime = row.colByName('savetime')!;
+            _emotion = row.colByName('emotion')!;
+            _music = row.colByName('music')!;
+          });
+          print("savedtext: $_savedText");
+          print("savetime: $_savetime");
+          loadDB();
+        }
+      }
+    } catch (e) {
+      print('Error : $e');
+    } finally {
+      await conn.close();
+    }
   }
 }
