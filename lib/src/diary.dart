@@ -17,10 +17,10 @@ class Diary extends StatefulWidget {
 Future<MySQLConnection> dbcon() async {
   // MySQL 접속 설정
   final conn = await MySQLConnection.createConnection(
-    host: '127.0.0.1',
+    host: '192.168.0.158',
     port: 3306,
-    userName: 'diary',
-    password: 'qwer1234',
+    userName: 'user',
+    password: 'qlalfqjsgh1234',
     databaseName: 'diary', // optional
   );
   await conn.connect();
@@ -393,6 +393,7 @@ class _DiaryState extends State<Diary> {
                 GoRouter.of(context).go('/home');
               },
               child: const Text(
+                //'저장하고 나가기'로 develop
                 '나가기',
                 style:
                     TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
