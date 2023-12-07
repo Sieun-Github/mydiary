@@ -5,7 +5,18 @@ import 'home.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:http/http.dart' as http;
+import 'dart:math';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:mysql_client/mysql_client.dart';
+
+Widget imageWidget = const SizedBox(
+  height: 1,
+  width: 1,
+);
 
 class Diary extends StatefulWidget {
   const Diary({super.key});
@@ -44,6 +55,8 @@ class _DiaryState extends State<Diary> {
   String? _emotion = '';
   String? _music = '';
   String? _savedText = '';
+  String _result = '';
+  final player = AudioPlayer();
   // late Future<List?> fromdb;
 
   //visibility 설정
@@ -62,6 +75,7 @@ class _DiaryState extends State<Diary> {
   // 데이터 저장 관련 함수
   @override
   void initState() {
+    setImage();
     super.initState();
     loadDB();
     //   setvisible();
@@ -95,11 +109,51 @@ class _DiaryState extends State<Diary> {
     //       };
   }
 
+  _saveImage() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    File file = File(
+        '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg');
+    if (image != null) {
+      file.writeAsBytesSync(await image!.readAsBytes());
+    }
+  }
+
+  // _loadSavedImage() async {
+  //   Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  //   String imageFile =
+  //       '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg';
+  //   if (File(imageFile).existsSync()) {
+  //     setState(() {
+  //       image = XFile.fromData(File(imageFile).readAsBytesSync());
+  //     });
+  //   }
+  // }
+
+  Future<void> _analyzeSentiment(String text) async {
+    final response = await http.post(
+      Uri.parse('http://192.168.0.55:5000/api/sentiment'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'text': text}),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      setState(() {
+        _result = '${data['emotion']}';
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   // 위젯
   @override
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd').format(day);
+
     return Scaffold(
       // 앱바 (뒤로가기)
       appBar: AppBar(
@@ -114,6 +168,9 @@ class _DiaryState extends State<Diary> {
             } else {
               GoRouter.of(context).go('/home');
             }
+            visitedDate = day;
+            player.dispose();
+            image = null;
           },
         ),
       ),
@@ -165,11 +222,12 @@ class _DiaryState extends State<Diary> {
                         if (pickedImage != null) {
                           setState(
                             () {
-                              images.clear();
-                              images.add(pickedImage);
+                              image = pickedImage;
                             },
                           );
                         }
+                        _saveImage();
+                        setImage();
                       },
                       icon: const Icon(
                         Icons.add_a_photo,
@@ -202,11 +260,15 @@ class _DiaryState extends State<Diary> {
                         if (pickedImage != null) {
                           setState(
                             () {
-                              images.clear();
-                              images.add(pickedImage);
+                              image = pickedImage;
                             },
                           );
                         }
+                        _saveImage();
+                        imageWidget = const SizedBox(
+                          height: 10,
+                        );
+                        setImage();
                       },
                       icon: const Icon(
                         Icons.add_photo_alternate_outlined,
@@ -219,59 +281,7 @@ class _DiaryState extends State<Diary> {
               ],
             ),
             // 선택된 이미지
-            Container(
-              margin: const EdgeInsets.all(10),
-              child: GridView.builder(
-                padding: const EdgeInsets.all(0),
-                shrinkWrap: true,
-                itemCount: images.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1 / 1,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: FileImage(
-                              File(images[index]!.path),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          icon: const Icon(Icons.close,
-                              color: Color(0xffdbd5f6), size: 15),
-                          onPressed: () {
-                            setState(
-                              () {
-                                images.remove(images[index]);
-                              },
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  );
-                },
-              ),
-            ),
-            // 선택한 날짜
-
+            imageWidget,
             // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -302,8 +312,6 @@ class _DiaryState extends State<Diary> {
               ]),
             ),
             // 저장 or 수정 버튼
-            Stack(
-              children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -313,7 +321,10 @@ class _DiaryState extends State<Diary> {
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Color(0xffdbd5f6))),
-                        onPressed: () {
+                        onPressed: () async {
+                          setImage();
+                          if (_textEditingController.text != '') {
+                          
                           // _visibility ? _hide() : _show();
                           setState(() {
                             _savebtn = false;
@@ -324,7 +335,28 @@ class _DiaryState extends State<Diary> {
                             _savedText = _textEditingController.text;
                           });
                           saveDB();
+                          setImage();
+                          await _analyzeSentiment(_textEditingController.text);
+                          String jsonString =
+                              await rootBundle.loadString('assets/DB.json');
+
+                          List<dynamic> jsonDataList = json.decode(jsonString);
+
+                          List<Map<String, dynamic>> typedJsonDataList =
+                              List<Map<String, dynamic>>.from(jsonDataList);
+
+                          var emotionDataList = typedJsonDataList
+                              .where((data) =>
+                                  data['EMOTION'] == int.parse(_result) + 1)
+                              .toList();
+
+                          var random = Random();
+                          var randomData = emotionDataList[
+                              random.nextInt(emotionDataList.length)];
+                          var url = randomData['URL'];
+                          await player.play(UrlSource(url));
                           // loadDB();
+                          }
                         },
                         child: const Text(
                           '저장',
@@ -341,12 +373,42 @@ class _DiaryState extends State<Diary> {
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Color(0xffdbd5f6))),
-                          onPressed: () {
-                            setState(() {
-                              _savedText = _textEditingController.text;
-                            });
-                            editDB();
-                            // loadDB();
+                          onPressed: () async {
+                          setImage();
+                          if (_textEditingController.text != '') {
+                          
+                          // _visibility ? _hide() : _show();
+                          setState(() {
+                            _savebtn = false;
+                            _editbtn = true;
+                            _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                                .format(
+                                    DateTime.now().add(Duration(hours: 24)));
+                            _savedText = _textEditingController.text;
+                          });
+                          editDB();
+                          setImage();
+                          await _analyzeSentiment(_textEditingController.text);
+                          String jsonString =
+                              await rootBundle.loadString('assets/DB.json');
+
+                          List<dynamic> jsonDataList = json.decode(jsonString);
+
+                          List<Map<String, dynamic>> typedJsonDataList =
+                              List<Map<String, dynamic>>.from(jsonDataList);
+
+                          var emotionDataList = typedJsonDataList
+                              .where((data) =>
+                                  data['EMOTION'] == int.parse(_result) + 1)
+                              .toList();
+
+                          var random = Random();
+                          var randomData = emotionDataList[
+                              random.nextInt(emotionDataList.length)];
+                          var url = randomData['URL'];
+                          await player.play(UrlSource(url));
+                          // loadDB();
+                          }
                           },
                           child: const Text(
                             '수정',
@@ -358,8 +420,6 @@ class _DiaryState extends State<Diary> {
                         ))
                   ],
                 )
-              ],
-            )
           ],
         ),
       ),
@@ -506,6 +566,29 @@ class _DiaryState extends State<Diary> {
       print('edit Error : $e');
     } finally {
       await conn.close();
+    }
+  }
+}
+
+setImage() async {
+  Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  if (image != null) {
+    imageWidget = SizedBox(
+      height: 100,
+      child: Image.file(File(image!.path)),
+    );
+  } else {
+    if (File('${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg').existsSync()) {
+      imageWidget = SizedBox(
+        height: 100,
+        child: Image.file(
+            File('${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')),
+      );
+    } else {
+      imageWidget = const SizedBox(
+        height: 1,
+        width: 1,
+      );
     }
   }
 }
