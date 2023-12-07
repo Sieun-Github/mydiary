@@ -12,7 +12,7 @@ class FirstPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(child: Image.asset('assets/images/Music.png')),
+          SizedBox(height: 100, child: Image.asset('assets/images/Music.png')),
           const SizedBox(
             height: 100,
           ),

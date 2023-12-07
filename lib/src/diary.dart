@@ -19,7 +19,7 @@ Future<MySQLConnection> dbcon() async {
   final conn = await MySQLConnection.createConnection(
     host: '127.0.0.1',
     port: 3306,
-    userName: 'root',
+    userName: 'diary',
     password: 'qwer1234',
     databaseName: 'diary', // optional
   );
