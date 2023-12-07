@@ -63,26 +63,36 @@ class _DiaryState extends State<Diary> {
   @override
   void initState() {
     super.initState();
-    _loadSavedText();
-  }
+    loadDB();
+    //   setvisible();
+    // }
 
-    _loadSavedText() {
-    late String text;
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
-    if (file.existsSync()) {
-      text = file.readAsStringSync();
-    } else {
-      text = '';
-    }
-    setState(() {
-      _savedText = text;
-    });
-  }
-
-  _saveText() {
-    File file = File('texts/${DateFormat('yyyy-MM-dd').format(day)}.txt');
-    file.writeAsStringSync(_textEditingController.text);
-    _loadSavedText();
+    // _savetime값.isbefore.now 일 때 _visibility, _
+    // now = DateFormat('HH:mm:ss').format(DateTime.now())
+    // setvisible() {
+    //   if (DateTime.parse(_savetime).isAfter(DateTime.now())) {
+    //     setState(() {
+    //       _visibility = true;
+    //       _savebtn = false;
+    //       _editbtn = true;
+    //     });
+    //   }
+    // _savedText != null
+    // // &&(DateFormat().format(_savetime).isbefore(DateFormat()))
+    //     ? {
+    //         setState(() {
+    //           _visibility = true;
+    //           _editbtn = true;
+    //           _savebtn = false;
+    //         })
+    //       }
+    //     : {
+    //         setState(() {
+    //           _visibility = true;
+    //           _editbtn = false;
+    //           _savebtn = true;
+    //         })
+    //       };
   }
 
   // 위젯
@@ -176,7 +186,7 @@ class _DiaryState extends State<Diary> {
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.lightBlueAccent,
+                      color: Color(0xffdbd5f6),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -298,25 +308,55 @@ class _DiaryState extends State<Diary> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Visibility(
-                  visible: _visibility,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('저장'),
-                  ),
-                ),
-                Visibility(
-                  visible: !_visibility,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _visibility ? _hide() : _show();
-                      _saveText();
-                      _loadSavedText();
-                    },
-                    child: const Text('수정'),))],
+                      visible: _savebtn,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Color(0xffdbd5f6))),
+                        onPressed: () {
+                          // _visibility ? _hide() : _show();
+                          setState(() {
+                            _savebtn = false;
+                            _editbtn = true;
+                            _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                                .format(
+                                    DateTime.now().add(Duration(hours: 24)));
+                            _savedText = _textEditingController.text;
+                          });
+                          saveDB();
+                          // loadDB();
+                        },
+                        child: const Text(
+                          '저장',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff291872),
+                              backgroundColor: Color(0xffdbd5f6)),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                        visible: _editbtn,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xffdbd5f6))),
+                          onPressed: () {
+                            setState(() {
+                              _savedText = _textEditingController.text;
+                            });
+                            editDB();
+                            // loadDB();
+                          },
+                          child: const Text(
+                            '수정',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff291872),
+                                backgroundColor: Color(0xffdbd5f6)),
+                          ),
+                        ))
+                  ],
                 )
               ],
             )
