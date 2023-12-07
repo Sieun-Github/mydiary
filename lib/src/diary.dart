@@ -77,6 +77,22 @@ class _DiaryState extends State<Diary> {
     //       _editbtn = true;
     //     });
     //   }
+    // _savedText != null
+    // // &&(DateFormat().format(_savetime).isbefore(DateFormat()))
+    //     ? {
+    //         setState(() {
+    //           _visibility = true;
+    //           _editbtn = true;
+    //           _savebtn = false;
+    //         })
+    //       }
+    //     : {
+    //         setState(() {
+    //           _visibility = true;
+    //           _editbtn = false;
+    //           _savebtn = true;
+    //         })
+    //       };
   }
 
   // 위젯
