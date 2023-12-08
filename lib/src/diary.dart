@@ -57,6 +57,7 @@ class _DiaryState extends State<Diary> {
   String? _savedText = '';
   String _result = '';
   final player = AudioPlayer();
+  bool _isPlaying = true;
   // late Future<List?> fromdb;
 
   //visibility 설정
@@ -312,114 +313,123 @@ class _DiaryState extends State<Diary> {
               ]),
             ),
             // 저장 or 수정 버튼
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Visibility(
-                      visible: _savebtn,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Color(0xffdbd5f6))),
-                        onPressed: () async {
-                          setImage();
-                          if (_textEditingController.text != '') {
-                          
-                          // _visibility ? _hide() : _show();
-                          setState(() {
-                            _savebtn = false;
-                            _editbtn = true;
-                            _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                .format(
-                                    DateTime.now().add(Duration(hours: 24)));
-                            _savedText = _textEditingController.text;
-                          });
-                          saveDB();
-                          setImage();
-                          await _analyzeSentiment(_textEditingController.text);
-                          String jsonString =
-                              await rootBundle.loadString('assets/DB.json');
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Visibility(
+                  visible: _savebtn,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xffdbd5f6))),
+                    onPressed: () async {
+                      setImage();
+                      if (_textEditingController.text != '') {
+                        // _visibility ? _hide() : _show();
+                        setState(() {
+                          _savebtn = false;
+                          _editbtn = true;
+                          _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                              .format(DateTime.now().add(Duration(hours: 24)));
+                          _savedText = _textEditingController.text;
+                        });
+                        saveDB();
+                        setImage();
+                        await _analyzeSentiment(_textEditingController.text);
+                        String jsonString =
+                            await rootBundle.loadString('assets/DB.json');
 
-                          List<dynamic> jsonDataList = json.decode(jsonString);
+                        List<dynamic> jsonDataList = json.decode(jsonString);
 
-                          List<Map<String, dynamic>> typedJsonDataList =
-                              List<Map<String, dynamic>>.from(jsonDataList);
+                        List<Map<String, dynamic>> typedJsonDataList =
+                            List<Map<String, dynamic>>.from(jsonDataList);
 
-                          var emotionDataList = typedJsonDataList
-                              .where((data) =>
-                                  data['EMOTION'] == int.parse(_result) + 1)
-                              .toList();
+                        var emotionDataList = typedJsonDataList
+                            .where((data) =>
+                                data['EMOTION'] == int.parse(_result) + 1)
+                            .toList();
 
-                          var random = Random();
-                          var randomData = emotionDataList[
-                              random.nextInt(emotionDataList.length)];
-                          var url = randomData['URL'];
-                          await player.play(UrlSource(url));
-                          // loadDB();
-                          }
-                        },
-                        child: const Text(
-                          '저장',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff291872),
-                              backgroundColor: Color(0xffdbd5f6)),
-                        ),
-                      ),
+                        var random = Random();
+                        var randomData = emotionDataList[
+                            random.nextInt(emotionDataList.length)];
+                        var url = randomData['URL'];
+                        await player.play(UrlSource(url));
+                        // loadDB();
+                      }
+                    },
+                    child: const Text(
+                      '저장',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff291872),
+                          backgroundColor: Color(0xffdbd5f6)),
                     ),
-                    Visibility(
-                        visible: _editbtn,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Color(0xffdbd5f6))),
-                          onPressed: () async {
-                          setImage();
-                          if (_textEditingController.text != '') {
-                          
-                          // _visibility ? _hide() : _show();
-                          setState(() {
-                            _savebtn = false;
-                            _editbtn = true;
-                            _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                .format(
-                                    DateTime.now().add(Duration(hours: 24)));
-                            _savedText = _textEditingController.text;
-                          });
-                          editDB();
-                          setImage();
-                          await _analyzeSentiment(_textEditingController.text);
-                          String jsonString =
-                              await rootBundle.loadString('assets/DB.json');
+                  ),
+                ),
+                Visibility(
+                  visible: _editbtn,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xffdbd5f6))),
+                    onPressed: () async {
+                      setImage();
+                      if (_textEditingController.text != '') {
+                        // _visibility ? _hide() : _show();
+                        setState(() {
+                          _savebtn = false;
+                          _editbtn = true;
+                          _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                              .format(DateTime.now().add(Duration(hours: 24)));
+                          _savedText = _textEditingController.text;
+                        });
+                        editDB();
+                        setImage();
+                        await _analyzeSentiment(_textEditingController.text);
+                        String jsonString =
+                            await rootBundle.loadString('assets/DB.json');
 
-                          List<dynamic> jsonDataList = json.decode(jsonString);
+                        List<dynamic> jsonDataList = json.decode(jsonString);
 
-                          List<Map<String, dynamic>> typedJsonDataList =
-                              List<Map<String, dynamic>>.from(jsonDataList);
+                        List<Map<String, dynamic>> typedJsonDataList =
+                            List<Map<String, dynamic>>.from(jsonDataList);
 
-                          var emotionDataList = typedJsonDataList
-                              .where((data) =>
-                                  data['EMOTION'] == int.parse(_result) + 1)
-                              .toList();
+                        var emotionDataList = typedJsonDataList
+                            .where((data) =>
+                                data['EMOTION'] == int.parse(_result) + 1)
+                            .toList();
 
-                          var random = Random();
-                          var randomData = emotionDataList[
-                              random.nextInt(emotionDataList.length)];
-                          var url = randomData['URL'];
-                          await player.play(UrlSource(url));
-                          // loadDB();
-                          }
-                          },
-                          child: const Text(
-                            '수정',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff291872),
-                                backgroundColor: Color(0xffdbd5f6)),
-                          ),
-                        ))
-                  ],
-                )
+                        var random = Random();
+                        var randomData = emotionDataList[
+                            random.nextInt(emotionDataList.length)];
+                        var url = randomData['URL'];
+                        await player.play(UrlSource(url));
+                        // loadDB();
+                      }
+                    },
+                    child: const Text(
+                      '수정',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff291872),
+                          backgroundColor: Color(0xffdbd5f6)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            IconButton(
+                onPressed: () {
+                  if (_isPlaying) {
+                    player.pause();
+                  } else {
+                    player.resume();
+                  }
+                  setState(() {
+                    _isPlaying = !_isPlaying;
+                  });
+                },
+                icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow))
           ],
         ),
       ),
@@ -578,11 +588,13 @@ setImage() async {
       child: Image.file(File(image!.path)),
     );
   } else {
-    if (File('${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg').existsSync()) {
+    if (File(
+            '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')
+        .existsSync()) {
       imageWidget = SizedBox(
         height: 100,
-        child: Image.file(
-            File('${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')),
+        child: Image.file(File(
+            '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')),
       );
     } else {
       imageWidget = const SizedBox(
