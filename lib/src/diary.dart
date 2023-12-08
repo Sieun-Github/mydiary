@@ -17,10 +17,10 @@ class Diary extends StatefulWidget {
 Future<MySQLConnection> dbcon() async {
   // MySQL 접속 설정
   final conn = await MySQLConnection.createConnection(
-    host: '192.168.0.158',
+    host: '127.0.0.1',
     port: 3306,
-    userName: 'user',
-    password: 'qlalfqjsgh1234',
+    userName: 'root',
+    password: 'qwer1234',
     databaseName: 'diary', // optional
   );
   await conn.connect();
@@ -77,7 +77,7 @@ class _DiaryState extends State<Diary> {
     //       _editbtn = true;
     //     });
     //   }
-    // _savedText != null
+    // _savedText != ''
     // // &&(DateFormat().format(_savetime).isbefore(DateFormat()))
     //     ? {
     //         setState(() {
@@ -270,8 +270,6 @@ class _DiaryState extends State<Diary> {
                 },
               ),
             ),
-            // 선택한 날짜
-
             // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -330,8 +328,7 @@ class _DiaryState extends State<Diary> {
                           '저장',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff291872),
-                              backgroundColor: Color(0xffdbd5f6)),
+                              color: Color(0xff291872),)
                         ),
                       ),
                     ),
@@ -352,8 +349,7 @@ class _DiaryState extends State<Diary> {
                             '수정',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff291872),
-                                backgroundColor: Color(0xffdbd5f6)),
+                                color: Color(0xff291872),),
                           ),
                         ))
                   ],
@@ -393,7 +389,6 @@ class _DiaryState extends State<Diary> {
                 GoRouter.of(context).go('/home');
               },
               child: const Text(
-                //'저장하고 나가기'로 develop
                 '나가기',
                 style:
                     TextStyle(color: Colors.red, fontWeight: FontWeight.bold),

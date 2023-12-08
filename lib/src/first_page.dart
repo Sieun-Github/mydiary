@@ -12,9 +12,9 @@ class FirstPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 100, child: Image.asset('assets/images/Music.png')),
+          SizedBox(width:500, child: Image.asset('assets/images/Music.png')),
           const SizedBox(
-            height: 100,
+            height: 40,
           ),
           const Text(
             'TITLE',
