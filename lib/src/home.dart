@@ -4,7 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 DateTime day = DateTime.now();
-
+DateTime visitedDate = DateTime.now();
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
