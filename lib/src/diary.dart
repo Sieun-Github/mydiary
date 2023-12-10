@@ -153,7 +153,7 @@ class _DiaryState extends State<Diary> {
   @override
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
-    String formattedDate = DateFormat('yy. MM. dd').format(day);
+    String formattedDate = DateFormat('yyyy. MM. dd').format(day);
 
     return MaterialApp(
         theme: ThemeData(fontFamily: 'NPS'),
@@ -199,14 +199,7 @@ class _DiaryState extends State<Diary> {
                         fontSize: 27,
                         fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                    child: const Column(children: [
-                      SizedBox(
-                        height: 30,
-                      )
-                    ]),
-                  ),
-            
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -303,19 +296,23 @@ class _DiaryState extends State<Diary> {
                         // 일기 작성
                         visible: _visibility,
                         child: TextFormField(
+                          style: TextStyle(fontSize: 18),
                           cursorColor: Color(0xff291872),
                           controller: _textEditingController,
                           maxLength: 150,
                           maxLines: 7,
                           decoration: const InputDecoration(
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff291872)),
+                                borderSide:
+                                    BorderSide(color: Color(0xff291872)),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff291872)),
+                                borderSide:
+                                    BorderSide(color: Color(0xff291872)),
                               ),
                               labelText: '일기 내용',
-                              labelStyle: TextStyle(color: Color(0xff291872))),
+                              labelStyle: TextStyle(
+                                  color: Color(0xff291872), fontSize: 15)),
                         ),
                       ),
                       Visibility(
@@ -342,8 +339,8 @@ class _DiaryState extends State<Diary> {
                                 _savebtn = false;
                                 _editbtn = true;
                                 _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                    .format(
-                                        DateTime.now().add(Duration(hours: 24)));
+                                    .format(DateTime.now()
+                                        .add(Duration(hours: 24)));
                                 _savedText = _textEditingController.text;
                               });
                               saveDB();
@@ -352,18 +349,18 @@ class _DiaryState extends State<Diary> {
                                   _textEditingController.text);
                               String jsonString =
                                   await rootBundle.loadString('assets/DB.json');
-            
+
                               List<dynamic> jsonDataList =
                                   json.decode(jsonString);
-            
+
                               List<Map<String, dynamic>> typedJsonDataList =
                                   List<Map<String, dynamic>>.from(jsonDataList);
-            
+
                               var emotionDataList = typedJsonDataList
                                   .where((data) =>
                                       data['EMOTION'] == int.parse(_result) + 1)
                                   .toList();
-            
+
                               var random = Random();
                               var randomData = emotionDataList[
                                   random.nextInt(emotionDataList.length)];
@@ -394,8 +391,8 @@ class _DiaryState extends State<Diary> {
                                 _savebtn = false;
                                 _editbtn = true;
                                 _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                    .format(
-                                        DateTime.now().add(Duration(hours: 24)));
+                                    .format(DateTime.now()
+                                        .add(Duration(hours: 24)));
                                 _savedText = _textEditingController.text;
                               });
                               editDB();
@@ -404,18 +401,18 @@ class _DiaryState extends State<Diary> {
                                   _textEditingController.text);
                               String jsonString =
                                   await rootBundle.loadString('assets/DB.json');
-            
+
                               List<dynamic> jsonDataList =
                                   json.decode(jsonString);
-            
+
                               List<Map<String, dynamic>> typedJsonDataList =
                                   List<Map<String, dynamic>>.from(jsonDataList);
-            
+
                               var emotionDataList = typedJsonDataList
                                   .where((data) =>
                                       data['EMOTION'] == int.parse(_result) + 1)
                                   .toList();
-            
+
                               var random = Random();
                               var randomData = emotionDataList[
                                   random.nextInt(emotionDataList.length)];
@@ -462,9 +459,9 @@ class _DiaryState extends State<Diary> {
         return AlertDialog(
           title: const Text(
             '경고',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NPS'),
           ),
-          content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.'),
+          content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.',style: TextStyle(fontFamily: 'NPS'),),
           actions: [
             TextButton(
               onPressed: () {
@@ -473,7 +470,7 @@ class _DiaryState extends State<Diary> {
               child: const Text(
                 '계속 적기',
                 style: TextStyle(
-                    color: Color(0xff291872), fontWeight: FontWeight.bold),
+                    color: Color(0xff291872), fontWeight: FontWeight.bold,fontFamily: 'NPS'),
               ),
             ),
             TextButton(
@@ -484,7 +481,7 @@ class _DiaryState extends State<Diary> {
                 //'저장하고 나가기'로 develop
                 '나가기',
                 style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontFamily: 'NPS'),
               ),
             ),
           ],
