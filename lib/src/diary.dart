@@ -28,10 +28,10 @@ class Diary extends StatefulWidget {
 Future<MySQLConnection> dbcon() async {
   // MySQL 접속 설정
   final conn = await MySQLConnection.createConnection(
-    host: '192.168.0.158',
+    host: '127.0.0.1',
     port: 3306,
-    userName: 'user',
-    password: 'qlalfqjsgh1234',
+    userName: 'root',
+    password: 'qwer1234',
     databaseName: 'diary', // optional
   );
   await conn.connect();
@@ -153,7 +153,7 @@ class _DiaryState extends State<Diary> {
   @override
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
-    String formattedDate = DateFormat('yyyy. MM. dd').format(day);
+    String formattedDate = DateFormat('yy. MM. dd').format(day);
 
     return MaterialApp(
         theme: ThemeData(fontFamily: 'NPS'),
@@ -162,6 +162,13 @@ class _DiaryState extends State<Diary> {
           appBar: AppBar(
             backgroundColor: Colors.white10,
             elevation: 0,
+            // title: Text(formattedDate,
+            //     style: const TextStyle(
+            //       color: Color(0xff291872),
+            //       fontSize: 20,
+            //       // fontWeight: FontWeight.bold),
+            //     )),
+            // centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               color: Color(0xff291872),
@@ -179,266 +186,269 @@ class _DiaryState extends State<Diary> {
           ),
           // 앱 페이지
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  formattedDate,
-                  style: const TextStyle(
-                      color: Color(0xff291872),
-                      fontSize: 27,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: const Column(children: [
-                    SizedBox(
-                      height: 30,
-                    )
-                  ]),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // 카메라 아이콘
-                    Visibility(
-                      visible: _visibility,
-                      child: Container(
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Color(0xffdbd5f6),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0.5,
-                                blurRadius: 5)
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () async {
-                            XFile? pickedImage = await picker.pickImage(
-                                source: ImageSource.camera);
-                            if (pickedImage != null) {
-                              setState(
-                                () {
-                                  image = pickedImage;
-                                },
-                              );
-                            }
-                            _saveImage();
-                            setImage();
-                          },
-                          icon: const Icon(
-                            Icons.add_a_photo,
-                            size: 30,
-                            color: Color(0xff291872),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(
+                        color: Color(0xff291872),
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    child: const Column(children: [
+                      SizedBox(
+                        height: 30,
+                      )
+                    ]),
+                  ),
+            
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // 카메라 아이콘
+                      Visibility(
+                        visible: _visibility,
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Color(0xffdbd5f6),
+                            borderRadius: BorderRadius.circular(5),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 0.5,
+                                  blurRadius: 5)
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () async {
+                              XFile? pickedImage = await picker.pickImage(
+                                  source: ImageSource.camera);
+                              if (pickedImage != null) {
+                                setState(
+                                  () {
+                                    image = pickedImage;
+                                  },
+                                );
+                              }
+                              _saveImage();
+                              setImage();
+                            },
+                            icon: const Icon(
+                              Icons.add_a_photo,
+                              size: 30,
+                              color: Color(0xff291872),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // 갤러리에서 추가 아이콘
-                    Visibility(
-                      visible: _visibility,
-                      child: Container(
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Color(0xffdbd5f6),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0.5,
-                                blurRadius: 5)
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () async {
-                            XFile? pickedImage = await picker.pickImage(
-                                source: ImageSource.gallery);
-                            if (pickedImage != null) {
-                              setState(
-                                () {
-                                  image = pickedImage;
-                                },
+                      // 갤러리에서 추가 아이콘
+                      Visibility(
+                        visible: _visibility,
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Color(0xffdbd5f6),
+                            borderRadius: BorderRadius.circular(5),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 0.5,
+                                  blurRadius: 5)
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () async {
+                              XFile? pickedImage = await picker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (pickedImage != null) {
+                                setState(
+                                  () {
+                                    image = pickedImage;
+                                  },
+                                );
+                              }
+                              _saveImage();
+                              imageWidget = const SizedBox(
+                                height: 10,
                               );
-                            }
-                            _saveImage();
-                            imageWidget = const SizedBox(
-                              height: 10,
-                            );
+                              setImage();
+                            },
+                            icon: const Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 30,
+                              color: Color(0xff291872),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  // 선택된 이미지
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: imageWidget),
+                  // 텍스트 영역
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    child: Stack(children: [
+                      Visibility(
+                        // 일기 작성
+                        visible: _visibility,
+                        child: TextFormField(
+                          cursorColor: Color(0xff291872),
+                          controller: _textEditingController,
+                          maxLength: 150,
+                          maxLines: 7,
+                          decoration: const InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff291872)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff291872)),
+                              ),
+                              labelText: '일기 내용',
+                              labelStyle: TextStyle(color: Color(0xff291872))),
+                        ),
+                      ),
+                      Visibility(
+                          // 일기 열람
+                          visible: !_visibility,
+                          child: Text(_savedText!))
+                    ]),
+                  ),
+                  // 저장 or 수정 버튼
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Visibility(
+                        visible: _savebtn,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xffdbd5f6))),
+                          onPressed: () async {
                             setImage();
+                            if (_textEditingController.text != '') {
+                              // _visibility ? _hide() : _show();
+                              setState(() {
+                                _savebtn = false;
+                                _editbtn = true;
+                                _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 24)));
+                                _savedText = _textEditingController.text;
+                              });
+                              saveDB();
+                              setImage();
+                              await _analyzeSentiment(
+                                  _textEditingController.text);
+                              String jsonString =
+                                  await rootBundle.loadString('assets/DB.json');
+            
+                              List<dynamic> jsonDataList =
+                                  json.decode(jsonString);
+            
+                              List<Map<String, dynamic>> typedJsonDataList =
+                                  List<Map<String, dynamic>>.from(jsonDataList);
+            
+                              var emotionDataList = typedJsonDataList
+                                  .where((data) =>
+                                      data['EMOTION'] == int.parse(_result) + 1)
+                                  .toList();
+            
+                              var random = Random();
+                              var randomData = emotionDataList[
+                                  random.nextInt(emotionDataList.length)];
+                              var url = randomData['URL'];
+                              await player.play(UrlSource(url));
+                            }
                           },
-                          icon: const Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 30,
-                            color: Color(0xff291872),
+                          child: const Text(
+                            '저장',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff291872),
+                                backgroundColor: Color(0xffdbd5f6)),
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
-                // 선택된 이미지
-                imageWidget,
-                // 텍스트 영역
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Stack(children: [
-                    Visibility(
-                      // 일기 작성
-                      visible: _visibility,
-                      child: TextFormField(
-                        cursorColor: Color(0xff291872),
-                        controller: _textEditingController,
-                        maxLength: 150,
-                        maxLines: 8,
-                        decoration: const InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff291872)),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff291872)),
-                            ),
-                            labelText: '일기 작성',
-                            labelStyle: TextStyle(color: Color(0xff291872))),
-                      ),
-                    ),
-                    Visibility(
-                        // 일기 열람
-                        visible: !_visibility,
-                        child: Text(_savedText!))
-                  ]),
-                ),
-                // 저장 or 수정 버튼
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Visibility(
-                      visible: _savebtn,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Color(0xffdbd5f6))),
-                        onPressed: () async {
-                          setImage();
-                          if (_textEditingController.text != '') {
-                            // _visibility ? _hide() : _show();
-                            setState(() {
-                              _savebtn = false;
-                              _editbtn = true;
-                              _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                  .format(
-                                      DateTime.now().add(Duration(hours: 24)));
-                              _savedText = _textEditingController.text;
-                            });
-                            saveDB();
+                      Visibility(
+                        visible: _editbtn,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xffdbd5f6))),
+                          onPressed: () async {
                             setImage();
-                            await _analyzeSentiment(
-                                _textEditingController.text);
-                            String jsonString =
-                                await rootBundle.loadString('assets/DB.json');
-
-                            List<dynamic> jsonDataList =
-                                json.decode(jsonString);
-
-                            List<Map<String, dynamic>> typedJsonDataList =
-                                List<Map<String, dynamic>>.from(jsonDataList);
-
-                            var emotionDataList = typedJsonDataList
-                                .where((data) =>
-                                    data['EMOTION'] == int.parse(_result) + 1)
-                                .toList();
-
-                            var random = Random();
-                            var randomData = emotionDataList[
-                                random.nextInt(emotionDataList.length)];
-                            var url = randomData['URL'];
-                            await player.play(UrlSource(url));
-                            // loadDB();
-                          }
-                        },
-                        child: const Text(
-                          '저장',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff291872),
-                              backgroundColor: Color(0xffdbd5f6)),
+                            if (_textEditingController.text != '') {
+                              // _visibility ? _hide() : _show();
+                              setState(() {
+                                _savebtn = false;
+                                _editbtn = true;
+                                _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                                    .format(
+                                        DateTime.now().add(Duration(hours: 24)));
+                                _savedText = _textEditingController.text;
+                              });
+                              editDB();
+                              setImage();
+                              await _analyzeSentiment(
+                                  _textEditingController.text);
+                              String jsonString =
+                                  await rootBundle.loadString('assets/DB.json');
+            
+                              List<dynamic> jsonDataList =
+                                  json.decode(jsonString);
+            
+                              List<Map<String, dynamic>> typedJsonDataList =
+                                  List<Map<String, dynamic>>.from(jsonDataList);
+            
+                              var emotionDataList = typedJsonDataList
+                                  .where((data) =>
+                                      data['EMOTION'] == int.parse(_result) + 1)
+                                  .toList();
+            
+                              var random = Random();
+                              var randomData = emotionDataList[
+                                  random.nextInt(emotionDataList.length)];
+                              var url = randomData['URL'];
+                              await player.play(UrlSource(url));
+                              // loadDB();
+                            }
+                          },
+                          child: const Text(
+                            '수정',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff291872),
+                                backgroundColor: Color(0xffdbd5f6)),
+                          ),
                         ),
                       ),
-                    ),
-                    Visibility(
-                      visible: _editbtn,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Color(0xffdbd5f6))),
-                        onPressed: () async {
-                          setImage();
-                          if (_textEditingController.text != '') {
-                            // _visibility ? _hide() : _show();
-                            setState(() {
-                              _savebtn = false;
-                              _editbtn = true;
-                              _savetime = DateFormat('yyyy-MM-dd HH:mm:ss')
-                                  .format(
-                                      DateTime.now().add(Duration(hours: 24)));
-                              _savedText = _textEditingController.text;
-                            });
-                            editDB();
-                            setImage();
-                            await _analyzeSentiment(
-                                _textEditingController.text);
-                            String jsonString =
-                                await rootBundle.loadString('assets/DB.json');
-
-                            List<dynamic> jsonDataList =
-                                json.decode(jsonString);
-
-                            List<Map<String, dynamic>> typedJsonDataList =
-                                List<Map<String, dynamic>>.from(jsonDataList);
-
-                            var emotionDataList = typedJsonDataList
-                                .where((data) =>
-                                    data['EMOTION'] == int.parse(_result) + 1)
-                                .toList();
-
-                            var random = Random();
-                            var randomData = emotionDataList[
-                                random.nextInt(emotionDataList.length)];
-                            var url = randomData['URL'];
-                            await player.play(UrlSource(url));
-                            // loadDB();
-                          }
-                        },
-                        child: const Text(
-                          '수정',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff291872),
-                              backgroundColor: Color(0xffdbd5f6)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                IconButton(
-                    onPressed: () {
-                      if (_isPlaying) {
-                        player.pause();
-                      } else {
-                        player.resume();
-                      }
-                      setState(() {
-                        _isPlaying = !_isPlaying;
-                      });
-                    },
-                    icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow))
-              ],
+                    ],
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        if (_isPlaying) {
+                          player.pause();
+                        } else {
+                          player.resume();
+                        }
+                        setState(() {
+                          _isPlaying = !_isPlaying;
+                        });
+                      },
+                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow))
+                ],
+              ),
             ),
           ),
         ));
@@ -533,11 +543,13 @@ class _DiaryState extends State<Diary> {
 
     try {
       result = await conn.execute(
-          "INSERT INTO content (date, text, savetime) VALUES (:day, :text, :savetime)",
+          "INSERT INTO content (date, text, savetime, emotion, URL) VALUES (:day, :text, :savetime, :emotion, :music)",
           {
             "day": DateFormat('yyyy-MM-dd').format(day),
             "text": _savedText,
-            "savetime": _savetime
+            "savetime": _savetime,
+            "emotion": _emotion,
+            "music": _music
           });
 
       if (result.numOfRows > 0) {
@@ -565,8 +577,13 @@ class _DiaryState extends State<Diary> {
 
     try {
       result = await conn.execute(
-          "UPDATE content SET text =:text WHERE (date = :day)",
-          {"text": _savedText, "day": DateFormat('yyyy-MM-dd').format(day)});
+          "UPDATE content SET (text =:text, emotion=:emotion, music=:music) WHERE (date = :day)",
+          {
+            "text": _savedText,
+            "emotion": _emotion,
+            "music": _music,
+            "day": DateFormat('yyyy-MM-dd').format(day),
+          });
 
       if (result.numOfRows > 0) {
         for (final row in result.rows) {
@@ -592,7 +609,7 @@ setImage() async {
   Directory documentsDirectory = await getApplicationDocumentsDirectory();
   if (image != null) {
     imageWidget = SizedBox(
-      height: 100,
+      width: double.infinity,
       child: Image.file(File(image!.path)),
     );
   } else {
@@ -600,7 +617,7 @@ setImage() async {
             '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')
         .existsSync()) {
       imageWidget = SizedBox(
-        height: 100,
+        width: double.infinity,
         child: Image.file(File(
             '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg')),
       );

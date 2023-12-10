@@ -15,15 +15,15 @@ class FirstPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                  height: 100, child: Image.asset('assets/images/Music.png')),
+              // SizedBox(
+              //     height: 100, child: Image.asset('assets/images/Music.png')),
               const SizedBox(
                 height: 100,
               ),
               const Text(
                 '하루 음색',
                 style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff291872)),
               ),
@@ -35,7 +35,7 @@ class FirstPage extends StatelessWidget {
                   GoRouter.of(context).go('/home');
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   backgroundColor: Color(0xffdbd5f6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -43,9 +43,9 @@ class FirstPage extends StatelessWidget {
                   minimumSize: const Size(10, 50),
                 ),
                 child: const Text(
-                  'START',
+                  '시작하기',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, ),
                 ),
               ),
               const SizedBox(height: 100),
