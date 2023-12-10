@@ -4,9 +4,14 @@ import 'package:go_router/go_router.dart';
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'NPS',
+      ),
+      home:  Scaffold(
         body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -17,10 +22,9 @@ class FirstPage extends StatelessWidget {
             height: 40,
           ),
           const Text(
-            'TITLE',
+            '하루 음색',
             style: TextStyle(
                 fontSize: 28,
-                fontWeight: FontWeight.bold,
                 color: Color(0xff291872)),
           ),
           const SizedBox(
@@ -47,6 +51,7 @@ class FirstPage extends StatelessWidget {
           const SizedBox(height: 100),
         ],
       ),
-    ));
+    ))
+    );
   }
 }
