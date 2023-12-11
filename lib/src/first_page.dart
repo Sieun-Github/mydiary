@@ -15,10 +15,10 @@ class FirstPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // SizedBox(
-              //     height: 100, child: Image.asset('assets/images/Music.png')),
+              SizedBox(
+                  height: 200, child: Image.asset('assets/images/logo.png')),
               const SizedBox(
-                height: 100,
+                height: 50,
               ),
               const Text(
                 '하루 음색',

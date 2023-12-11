@@ -298,17 +298,17 @@ class _DiaryState extends State<Diary> {
                   ),
                   // 선택된 이미지
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(25, 25, 25, 25),
                       child: imageWidget),
                   // 텍스트 영역
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: Stack(children: [
                       Visibility(
                         // 일기 작성
                         visible: _visibility,
                         child: TextFormField(
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(fontSize: 17),
                           cursorColor: Color(0xff291872),
                           controller: _textEditingController,
                           maxLength: 150,
