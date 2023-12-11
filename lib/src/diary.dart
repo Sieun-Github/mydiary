@@ -192,6 +192,18 @@ class _DiaryState extends State<Diary> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  IconButton(
+                      onPressed: () {
+                        if (_isPlaying) {
+                          player.pause();
+                        } else {
+                          player.resume();
+                        }
+                        setState(() {
+                          _isPlaying = !_isPlaying;
+                        });
+                      },
+                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow)),
                   Text(
                     formattedDate,
                     style: const TextStyle(
@@ -432,18 +444,6 @@ class _DiaryState extends State<Diary> {
                       ),
                     ],
                   ),
-                  IconButton(
-                      onPressed: () {
-                        if (_isPlaying) {
-                          player.pause();
-                        } else {
-                          player.resume();
-                        }
-                        setState(() {
-                          _isPlaying = !_isPlaying;
-                        });
-                      },
-                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow))
                 ],
               ),
             ),
@@ -461,7 +461,10 @@ class _DiaryState extends State<Diary> {
             '경고',
             style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NPS'),
           ),
-          content: const Text('정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.',style: TextStyle(fontFamily: 'NPS'),),
+          content: const Text(
+            '정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.',
+            style: TextStyle(fontFamily: 'NPS'),
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -470,7 +473,9 @@ class _DiaryState extends State<Diary> {
               child: const Text(
                 '계속 적기',
                 style: TextStyle(
-                    color: Color(0xff291872), fontWeight: FontWeight.bold,fontFamily: 'NPS'),
+                    color: Color(0xff291872),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'NPS'),
               ),
             ),
             TextButton(
@@ -480,8 +485,10 @@ class _DiaryState extends State<Diary> {
               child: const Text(
                 //'저장하고 나가기'로 develop
                 '나가기',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontFamily: 'NPS'),
+                style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'NPS'),
               ),
             ),
           ],
