@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
               calendarStyle: const CalendarStyle(
                 outsideDaysVisible: false,
                 todayDecoration: BoxDecoration(
-                  color: Color(0xffdbd5f6),
+                  color: Color.fromARGB(255, 162, 146, 233),
                   shape: BoxShape.circle,
                 ),
                 todayTextStyle: TextStyle(
@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.white,
                     fontSize: 15),
                 selectedDecoration: BoxDecoration(
-                  color: Color(0xffdbd5f6),
+                  color: Color.fromARGB(255, 162, 146, 233),
                   shape: BoxShape.circle,
                 ),
                 selectedTextStyle: TextStyle(

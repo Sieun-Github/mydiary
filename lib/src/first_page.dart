@@ -36,7 +36,7 @@ class FirstPage extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  backgroundColor: Color(0xffdbd5f6),
+                  backgroundColor: Color.fromARGB(255, 162, 146, 233),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
