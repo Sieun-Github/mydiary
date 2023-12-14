@@ -57,7 +57,6 @@ class _DiaryState extends State<Diary> {
   bool _visibility = true;
   bool _editbtn = false;
   bool _savebtn = true;
-  String? _date = '';
   String? _savetime = '';
   String? _emotion = '';
   String? _music = '';
@@ -65,7 +64,6 @@ class _DiaryState extends State<Diary> {
   String _result = '';
   final player = AudioPlayer();
   bool _isPlaying = true;
-  // late Future<List?> fromdb;
 
   //visibility 설정
   void _show() {
@@ -176,13 +174,12 @@ class _DiaryState extends State<Diary> {
             ),
           ),
           // 앱 페이지
-          body: Center(
-            child: SingleChildScrollView(
+          body: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: [SizedBox(height: 0.15*MediaQuery.of(context).size.height),
                   IconButton(
                       onPressed: () {
                         if (_isPlaying) {
@@ -299,12 +296,13 @@ class _DiaryState extends State<Diary> {
                         // 일기 작성
                         visible: _visibility,
                         child: TextFormField(
-                          style: TextStyle(fontSize: 17),
+                          style: TextStyle(fontSize: 17, height:1.5),
                           cursorColor: Color(0xff291872),
                           controller: _textEditingController,
                           maxLength: 150,
-                          maxLines: 7,
+                          maxLines: 5,
                           decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.fromLTRB(10,0,10,20),
                               focusedBorder: OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Color(0xff291872)),
@@ -322,12 +320,9 @@ class _DiaryState extends State<Diary> {
                           // 일기 열람
                           visible: !_visibility,
                           child:
-                              // Padding(
-                              //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              //     child:
                               Text(
                             _savedText!,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 18, height: 1.7),
                             textAlign: TextAlign.center,
                             maxLines: 7,
                           ))
@@ -454,7 +449,7 @@ class _DiaryState extends State<Diary> {
               ),
             ),
           ),
-        ));
+        );
   }
 
   // 뒤로가기 시 경고창
@@ -469,7 +464,7 @@ class _DiaryState extends State<Diary> {
           ),
           content: const Text(
             '정말 뒤로 가시겠습니까? 작성 중인 내용이 저장되지 않을 수 있습니다.',
-            style: TextStyle(fontFamily: 'NPS'),
+            style: TextStyle(fontFamily: 'NPS', ),
           ),
           actions: [
             TextButton(
@@ -598,7 +593,6 @@ class _DiaryState extends State<Diary> {
       if (result.numOfRows > 0) {
         for (final row in result.rows) {
           setState(() {
-            _date = row.colByName('date')!;
             _savedText = row.colByName('text')!;
             _savetime = row.colByName('savetime')!;
             _emotion = row.colByName('emotion')!;
