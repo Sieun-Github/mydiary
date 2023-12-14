@@ -79,35 +79,7 @@ class _DiaryState extends State<Diary> {
     setImage();
     super.initState();
     loadDB();
-    //   setvisible();
-    // }
-
-    // _savetime값.isbefore.now 일 때 _visibility, _
-    // now = DateFormat('HH:mm:ss').format(DateTime.now())
-    // setvisible() {
-    //   if (DateTime.parse(_savetime).isAfter(DateTime.now())) {
-    //     setState(() {
-    //       _visibility = true;
-    //       _savebtn = false;
-    //       _editbtn = true;
-    //     });
-    //   }
-    // _savedText != null
-    // // &&(DateFormat().format(_savetime).isbefore(DateFormat()))
-    //     ? {
-    //         setState(() {
-    //           _visibility = true;
-    //           _editbtn = true;
-    //           _savebtn = false;
-    //         })
-    //       }
-    //     : {
-    //         setState(() {
-    //           _visibility = true;
-    //           _editbtn = false;
-    //           _savebtn = true;
-    //         })
-    //       };
+    
   }
 
   _saveImage() async {
