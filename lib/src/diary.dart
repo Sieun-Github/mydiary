@@ -33,6 +33,13 @@ Future<MySQLConnection> dbcon() async {
     userName: 'root',
     password: 'qwer1234',
     databaseName: 'diary', // optional
+
+    // host: '192.168.0.158',
+    // port: 3306,
+    // userName: 'root',
+    // password: 'qlalfqjsgh1234',
+    // databaseName: 'diary', 
+
   );
   await conn.connect();
   print("Connected");
@@ -359,13 +366,13 @@ class _DiaryState extends State<Diary> {
 
                               var emotionDataList = typedJsonDataList
                                   .where((data) =>
-                                      data['EMOTION'] == int.parse(_result) + 1)
+                                      data['EMOTION'] == int.parse(_result))
                                   .toList();
 
                               var random = Random();
                               var randomData = emotionDataList[
                                   random.nextInt(emotionDataList.length)];
-                              var emo = randomData['EMOTION']-1;
+                              var emo = randomData['EMOTION']; 
                               var url = randomData['URL'];
                               await player.play(UrlSource(url));
                               setState(() {
@@ -413,7 +420,7 @@ class _DiaryState extends State<Diary> {
 
                               var emotionDataList = typedJsonDataList
                                   .where((data) =>
-                                      data['EMOTION'] == int.parse(_result) + 1)
+                                      data['EMOTION'] == int.parse(_result))
                                   .toList();
 
                               var random = Random();
