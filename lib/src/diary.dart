@@ -126,6 +126,19 @@ class _DiaryState extends State<Diary> {
   Widget build(BuildContext context) {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd').format(day);
+    
+    if (_savedText != '' &&
+        DateTime.now()
+            .isBefore(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
+      _savebtn = false;
+      _editbtn = true;
+    } else if (_savedText != '' &&
+        DateTime.now()
+            .isAfter(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
+      _visibility = false;
+      _savebtn = false;
+      _editbtn = false;
+    }
 
     return MaterialApp(
         theme: ThemeData(fontFamily: 'NPS'),
