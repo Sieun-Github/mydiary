@@ -36,7 +36,7 @@ Future<MySQLConnection> dbcon() async {
 
     // host: '192.168.0.158',
     // port: 3306,
-    // userName: 'root',
+    // userName: 'user',
     // password: 'qlalfqjsgh1234',
     // databaseName: 'diary', 
 
