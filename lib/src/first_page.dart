@@ -45,9 +45,9 @@ class FirstPage extends StatelessWidget {
                 child: const Text(
                   '시작하기',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, ),
+                  style: TextStyle(fontSize: 20, color: Colors.white,
                 ),
-              ),
+              ),),
               const SizedBox(height: 100),
             ],
           ),
