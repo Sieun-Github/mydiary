@@ -65,8 +65,9 @@ class _DiaryState extends State<Diary> {
   String? _singer = '';
   double _currentPosition = 0.0;
   double _totalDuration = 0.0;
+  // AudioPlayer p = AudioPlayer();
   final player = AudioPlayer();
-  bool _isPlaying = true;
+  bool _isPlaying = false;
   XFile? image;
 
   Widget imageWidget = const SizedBox(
@@ -124,19 +125,6 @@ class _DiaryState extends State<Diary> {
     }
   }
 
-  //visibility 설정
-  void _show() {
-    setState(() {
-      _visibility = !_visibility;
-    });
-  }
-
-  void _hide() {
-    setState(() {
-      _visibility = !_visibility;
-    });
-  }
-
   // 데이터 저장 관련 함수
   @override
   void initState() {
@@ -178,17 +166,6 @@ class _DiaryState extends State<Diary> {
     }
   }
 
-  // _loadSavedImage() async {
-  //   Directory documentsDirectory = await getApplicationDocumentsDirectory();
-  //   String imageFile =
-  //       '${documentsDirectory.path}/${DateFormat('yyyy-MM-dd').format(day)}.jpg';
-  //   if (File(imageFile).existsSync()) {
-  //     setState(() {
-  //       image = XFile.fromData(File(imageFile).readAsBytesSync());
-  //     });
-  //   }
-  // }
-
   Future<void> _analyzeSentiment(String text) async {
     final response = await http.post(
       Uri.parse('http://192.168.0.55:5000/api/sentiment'),
@@ -220,8 +197,7 @@ class _DiaryState extends State<Diary> {
             .isBefore(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
       _savebtn = false;
       _editbtn = true;
-    } 
-    else if (_savedText != '' &&
+    } else if (_savedText != '' &&
         DateTime.now()
             .isAfter(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
       _visibility = false;
@@ -231,10 +207,12 @@ class _DiaryState extends State<Diary> {
 
     if (_music != '') {
       isPositionedVisible = true;
-      setState(() {
-        _title= _title;
-      }); 
-      player.play(UrlSource(_music!));
+      player.setSourceUrl(_music!);
+      // if (!_isPlaying) {
+      //   player.pause();
+      // } else {
+      //   player.resume();
+      // }
     }
 
     return MaterialApp(
@@ -446,6 +424,7 @@ class _DiaryState extends State<Diary> {
                                     backgroundColor: MaterialStateProperty.all(
                                         Color(0xffdbd5f6))),
                                 onPressed: () async {
+                                  // p.dispose();
                                   Directory documentsDirectory =
                                       await getApplicationDocumentsDirectory();
                                   if (_textEditingController.text != '') {
@@ -482,7 +461,7 @@ class _DiaryState extends State<Diary> {
                                     var url = randomData['URL'];
                                     var title = randomData['TITLE'];
                                     var singer = randomData['SINGER'];
-                                    await player.play(UrlSource(url));
+                                    await player.setSourceUrl(url);
                                     setState(() {
                                       _emotion = emo.toString();
                                       _music = url;
@@ -536,6 +515,8 @@ class _DiaryState extends State<Diary> {
                                     backgroundColor: MaterialStateProperty.all(
                                         Color(0xffdbd5f6))),
                                 onPressed: () async {
+                                  // p.dispose();
+                                  final player = AudioPlayer();
                                   Directory documentsDirectory =
                                       await getApplicationDocumentsDirectory();
                                   if (_textEditingController.text != '') {
@@ -568,7 +549,7 @@ class _DiaryState extends State<Diary> {
                                     var url = randomData['URL'];
                                     var title = randomData['TITLE'];
                                     var singer = randomData['SINGER'];
-                                    await player.play(UrlSource(url));
+                                    await player.setSourceUrl(url);
                                     if (imageWidget !=
                                         Stack(
                                           children: [
@@ -663,8 +644,16 @@ class _DiaryState extends State<Diary> {
                         // Play/Pause 아이콘
                         IconButton(
                           onPressed: () {
+                            // player.onPlayerStateChanged.listen((event) {
+                            //   if(event == PlayerState.playing){
+                            //     player.pause();
+                            //   }else if(event == PlayerState.paused){
+                            //     player.resume();
+                            //   }
+                            //  });
                             if (_isPlaying) {
                               player.pause();
+                              
                             } else {
                               player.resume();
                             }
@@ -885,8 +874,8 @@ class _DiaryState extends State<Diary> {
             _savetime = row.colByName('savetime')!;
             _emotion = row.colByName('emotion')!;
             _music = row.colByName('music')!;
-            titledb= row.colByName('title');
-            singerdb=row.colByName('singer');
+            titledb = row.colByName('title');
+            singerdb = row.colByName('singer');
           });
         }
         loadDB();
