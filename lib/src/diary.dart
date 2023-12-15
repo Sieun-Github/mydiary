@@ -58,9 +58,11 @@ class _DiaryState extends State<Diary> {
   String? _emotion = '';
   String? _music = '';
   String? _savedText = '';
+  String? singerdb = '';
+  String? titledb = '';
   String _result = '';
-  String _title = '';
-  String _singer = '';
+  String? _title = '';
+  String? _singer = '';
   double _currentPosition = 0.0;
   double _totalDuration = 0.0;
   final player = AudioPlayer();
@@ -218,7 +220,8 @@ class _DiaryState extends State<Diary> {
             .isBefore(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
       _savebtn = false;
       _editbtn = true;
-    } else if (_savedText != '' &&
+    } 
+    else if (_savedText != '' &&
         DateTime.now()
             .isAfter(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
       _visibility = false;
@@ -228,6 +231,9 @@ class _DiaryState extends State<Diary> {
 
     if (_music != '') {
       isPositionedVisible = true;
+      setState(() {
+        _title= _title;
+      }); 
       player.play(UrlSource(_music!));
     }
 
@@ -637,7 +643,7 @@ class _DiaryState extends State<Diary> {
                                 padding:
                                     const EdgeInsets.only(left: 8.0, top: 8.0),
                                 child: Text(
-                                  _title,
+                                  _title!,
                                   style: TextStyle(
                                       color: Color(0xff291872), fontSize: 14),
                                 ),
@@ -646,7 +652,7 @@ class _DiaryState extends State<Diary> {
                                 padding: const EdgeInsets.only(
                                     left: 8.0, bottom: 8.0),
                                 child: Text(
-                                  _singer,
+                                  _singer!,
                                   style: TextStyle(
                                       color: Color(0xff291872), fontSize: 14),
                                 ),
@@ -789,10 +795,23 @@ class _DiaryState extends State<Diary> {
             } else {
               _emotion = row.colByName('emotion');
             }
+
             if (row.colByName('music') == null) {
               _music = null;
             } else {
               _music = row.colByName('music');
+            }
+
+            if (row.colByName('title') == null) {
+              _title = null;
+            } else {
+              _title = row.colByName('title');
+            }
+
+            if (row.colByName('singer') == null) {
+              _singer = null;
+            } else {
+              _singer = row.colByName('singer');
             }
           });
         }
@@ -866,6 +885,8 @@ class _DiaryState extends State<Diary> {
             _savetime = row.colByName('savetime')!;
             _emotion = row.colByName('emotion')!;
             _music = row.colByName('music')!;
+            titledb= row.colByName('title');
+            singerdb=row.colByName('singer');
           });
         }
         loadDB();
