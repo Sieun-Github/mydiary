@@ -23,19 +23,19 @@ class Diary extends StatefulWidget {
 Future<MySQLConnection> dbcon() async {
   // MySQL 접속 설정
   final conn = await MySQLConnection.createConnection(
-    // localhost
-    host: '127.0.0.1',
-    port: 3306,
-    userName: 'root',
-    password: 'qwer1234',
-    databaseName: 'diary',
+    // // localhost
+    // host: '127.0.0.1',
+    // port: 3306,
+    // userName: 'root',
+    // password: 'qwer1234',
+    // databaseName: 'diary',
 
     // 외부 컴퓨터로 사용 시
-    // host: '192.168.0.158',
-    // port: 3306,
-    // userName: 'user',
-    // password: 'qlalfqjsgh1234',
-    // databaseName: 'diary',
+    host: '192.168.0.158',
+    port: 3306,
+    userName: 'user',
+    password: 'qlalfqjsgh1234',
+    databaseName: 'diary',
   );
   await conn.connect();
   print("Connected");
@@ -53,6 +53,7 @@ class _DiaryState extends State<Diary> {
   bool _editbtn = false;
   bool _savebtn = true;
   bool isPositionedVisible = false;
+  // late bool isPositionedVisible;
   String? _savetime = '';
   String? _emotion = '';
   String? _music = '';
@@ -158,7 +159,7 @@ class _DiaryState extends State<Diary> {
         _totalDuration = duration.inSeconds.toDouble();
       });
     });
-    // 추가 제안: 오디오가 종료될 때 타이머도 취소하도록 하세요.
+    //오디오가 종료될 때 타이머도 취소하도록 하세요.
     player.onPlayerComplete.listen((event) {
       _timer.cancel();
     });
@@ -211,6 +212,7 @@ class _DiaryState extends State<Diary> {
     _textEditingController = TextEditingController(text: _savedText);
     String formattedDate = DateFormat('yyyy. MM. dd').format(day);
 
+    // 수정 가능 / 수정 불가능 페이지 구분
     if (_savedText != '' &&
         DateTime.now()
             .isBefore(DateFormat('yyyy-MM-dd HH:mm:ss').parse(_savetime!))) {
@@ -224,6 +226,11 @@ class _DiaryState extends State<Diary> {
       _editbtn = false;
     }
 
+    if (_music != '') {
+      isPositionedVisible = true;
+      player.play(UrlSource(_music!));
+    }
+
     return MaterialApp(
       theme: ThemeData(fontFamily: 'NPS'),
       home: Scaffold(
@@ -231,13 +238,6 @@ class _DiaryState extends State<Diary> {
         appBar: AppBar(
           backgroundColor: Colors.white10,
           elevation: 0,
-          // title: Text(formattedDate,
-          //     style: const TextStyle(
-          //       color: Color(0xff291872),
-          //       fontSize: 20,
-          //       // fontWeight: FontWeight.bold),
-          //     )),
-          // centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             color: Color(0xff291872),
@@ -298,7 +298,8 @@ class _DiaryState extends State<Diary> {
                                     XFile? pickedImage = await picker.pickImage(
                                         source: ImageSource.camera);
                                     if (pickedImage != null) {
-                                      setState(() {
+                                      setState(
+                                        () {
                                           image = pickedImage;
                                         },
                                       );
@@ -393,11 +394,38 @@ class _DiaryState extends State<Diary> {
                             Visibility(
                                 // 일기 열람
                                 visible: !_visibility,
-                                child: Text(
-                                  _savedText!,
-                                  style: TextStyle(fontSize: 18, height: 1.7),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 7,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    // border: Border.all(
+                                    //     width: 1.3,
+                                    //     color:
+                                    //         Color.fromARGB(255, 211, 203, 246)),
+                                    border: Border(
+                                      right: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 211, 203, 246),
+                                        width: 1.3,
+                                      ),
+                                      top: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 211, 203, 246),
+                                        width: 1.3,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 0, 5, 5),
+                                    child: Text(
+                                      _savedText!,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          height: 1.7,
+                                          color: Color(0xff291872)),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 7,
+                                    ),
+                                  ),
                                 ))
                           ]),
                         ),
@@ -783,13 +811,15 @@ class _DiaryState extends State<Diary> {
 
     try {
       result = await conn.execute(
-          "INSERT INTO content (date, text, savetime, emotion, music) VALUES (:day, :text, :savetime, :emotion, :music)",
+          "INSERT INTO content (date, text, savetime, emotion, music, singer, title) VALUES (:day, :text, :savetime, :emotion, :music, :singer, :title)",
           {
             "day": DateFormat('yyyy-MM-dd').format(day),
             "text": _savedText,
             "savetime": _savetime,
             "emotion": _emotion,
-            "music": _music
+            "music": _music,
+            "singer": _singer,
+            "title": _title
           });
 
       if (result.numOfRows > 0) {
@@ -799,6 +829,8 @@ class _DiaryState extends State<Diary> {
             _savetime = row.colByName('savetime')!;
             _emotion = row.colByName('emotion')!;
             _music = row.colByName('music')!;
+            _title = row.colByName('singer')!;
+            _singer = row.colByName('title')!;
           });
         }
         loadDB();
@@ -817,11 +849,13 @@ class _DiaryState extends State<Diary> {
 
     try {
       result = await conn.execute(
-          "UPDATE content SET text =:text, emotion=:emotion, music=:music WHERE (date = :day)",
+          "UPDATE content SET text =:text, emotion=:emotion, music=:music, singer=:singer, title=:title WHERE (date = :day)",
           {
             "text": _savedText,
             "emotion": _emotion,
             "music": _music,
+            "singer": _singer,
+            "title": _title,
             "day": DateFormat('yyyy-MM-dd').format(day),
           });
 
